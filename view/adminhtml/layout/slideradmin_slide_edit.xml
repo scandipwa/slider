@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Scandiweb\Slider\Block\Adminhtml\Slide\Edit" name="slider_slide_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Scandiweb\Slider\Block\Adminhtml\Slide\Edit\Tabs" name="slider_slide_edit_tabs">
+                <block class="Scandiweb\Slider\Block\Adminhtml\Slide\Edit\Tab\Slide" name="slider_slide_edit_tab_slide"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">slide_section</argument>
+                    <argument name="block" xsi:type="string">slider_slide_edit_tab_slide</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">image_map</argument>
+                    <argument name="block" xsi:type="array">
+                        <item name="label" xsi:type="string">Image Maps</item>
+                        <item name="title" xsi:type="string">Image Maps</item>
+                        <item name="url" xsi:type="helper" helper="Scandiweb\Slider\Helper\Data::mapGridUrl"/>
+                        <item name="class" xsi:type="string">ajax</item>
+                    </argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

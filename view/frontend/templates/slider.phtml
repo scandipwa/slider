@@ -1,0 +1,212 @@
+<?php
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+/* @var Scandiweb\Slider\Block\Widget\Slider $block */
+?>
+<?php
+$slider = $block->getSlider();
+?>
+<div class="sw-slider" id="sw-slider-<?php echo $slider->getId() ?>">
+    <?php foreach ($block->getSlides() as $slide): ?>
+        <?php /* @var Scandiweb\Slider\Model\Slide $slide */ ?>
+        <div class="sw-slider-slide">
+            <!-- Block 1 -->
+            <?php if ($slide->getSlideLink()): ?>
+            <a href="<?php echo $slide->getSlideLink() ?>"
+               class="<?php echo $slide->getSlideWidthClass() ?>" >
+                <?php endif ?>
+                <?php if ($slide->getEmbedCode()): ?>
+                    <?php echo $slide->getEmbedCode() ?>
+                <?php else: ?>
+                    <img srcSet="<?php echo $block->getSrcSetEntry($slide->getImageUrl(), 375) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl(), 768) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl(), 1024) ?>
+                                 <?php echo $slide->getImageUrl() . ' 1200w' ?>"
+                         sizes="(max-width: 375px) 375px,
+                                (max-width: 768px) 768px,
+                                (max-width: 1024px) 1024px,
+                                1200px"
+                    <?php echo ($slider->getLazyLoad()) ? 'data-lazy' : 'src' ?>="<?php echo $slide->getImageUrl() ?>" usemap="map-<?php echo $slide->getSlideId() ?>"
+                    />
+                <?php endif ?>
+
+                <?php if ($slide->getDisplayTitle() || $slide->getSlideText()): ?>
+                    <div class="sw-slider-text <?php echo $block->getSlideTextClass($slide) ?>">
+                        <?php if ($slide->getDisplayTitle()): ?>
+                            <h2><?php echo $slide->getDisplayTitle() ?></h2>
+                        <?php endif ?>
+
+                        <?php if ($slide->getSlideText()): ?>
+                            <?php echo $block->filterWysiwygContent($slide->getSlideText()); ?>
+                        <?php endif ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($slide->getSlideLink()): ?>
+            </a>
+        <?php endif ?>
+
+            <!-- Block 2 -->
+            <?php if ($slide->getSlideLink2()): ?>
+            <a href="<?php echo $slide->getSlideLink2() ?>">
+                <?php endif ?>
+                <?php if ($slide->getEmbedCode2()): ?>
+                    <?php echo $slide->getEmbedCode2() ?>
+                <?php else: ?>
+                    <?php if ($slide->getImageUrl2()): ?>
+                        <img srcSet="<?php echo $block->getSrcSetEntry($slide->getImageUrl2(), 375) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl2(), 768) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl2(), 1024) ?>
+                                 <?php echo $slide->getImageUrl2() . ' 1200w' ?>"
+                             sizes="(max-width: 375px) 375px,
+                                    (max-width: 768px) 768px,
+                                    (max-width: 1024px) 1024px,
+                                    1200px"
+                        <?php echo ($slider->getLazyLoad()) ? 'data-lazy' : 'src' ?>="<?php echo $slide->getImageUrl2() ?>" usemap="map-<?php echo $slide->getSlideId() ?>"
+                        />
+                    <?php endif ?>
+                <?php endif ?>
+
+                <?php if ($slide->getDisplayTitle2() || $slide->getSlideText2()): ?>
+                    <div class="sw-slider-text <?php echo $block->getSlideTextClass2($slide) ?>">
+                        <?php if ($slide->getDisplayTitle2()): ?>
+                            <h2><?php echo $slide->getDisplayTitle2() ?></h2>
+                        <?php endif ?>
+
+                        <?php if ($slide->getSlideText2()): ?>
+                            <p><?php echo $slide->getSlideText2() ?></p>
+                        <?php endif ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($slide->getSlideLink2()): ?>
+            </a>
+        <?php endif ?>
+
+            <!-- Block 3 -->
+            <?php if ($slide->getSlideLink3()): ?>
+            <a href="<?php echo $slide->getSlideLink3() ?>">
+                <?php endif ?>
+                <?php if ($slide->getEmbedCode3()): ?>
+                    <?php echo $slide->getEmbedCode3() ?>
+                <?php else: ?>
+                    <?php if ($slide->getImageUrl3()): ?>
+                        <img srcSet="<?php echo $block->getSrcSetEntry($slide->getImageUrl3(), 375) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl3(), 768) ?>
+                                 <?php echo $block->getSrcSetEntry($slide->getImageUrl3(), 1024) ?>
+                                 <?php echo $slide->getImageUrl3() . ' 1200w' ?>"
+                             sizes="(max-width: 375px) 375px,
+                                    (max-width: 768px) 768px,
+                                    (max-width: 1024px) 1024px,
+                                    1200px"
+                        <?php echo ($slider->getLazyLoad()) ? 'data-lazy' : 'src' ?>="<?php echo $slide->getImageUrl3() ?>" usemap="map-<?php echo $slide->getSlideId() ?>"
+                        />
+                    <?php endif ?>
+                <?php endif ?>
+
+                <?php if ($slide->getDisplayTitle3() || $slide->getSlideText3()): ?>
+                    <div class="sw-slider-text <?php echo $block->getSlideTextClass3($slide) ?>">
+                        <?php if ($slide->getDisplayTitle3()): ?>
+                            <h2><?php echo $slide->getDisplayTitle3() ?></h2>
+                        <?php endif ?>
+
+                        <?php if ($slide->getSlideText3()): ?>
+                            <p><?php echo $slide->getSlideText3() ?></p>
+                        <?php endif ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($slide->getSlideLink3()): ?>
+            </a>
+        <?php endif ?>
+        </div>
+    <?php endforeach ?>
+</div>
+
+<?php if ($block->getMaps()->count()): ?>
+    <script type="text/javascript">
+        require(['scandiweb/slider-products'], function() {});
+    </script>
+    <div class="sw-slider-maps" data-mage-init='{"scandiweb/slider-products": {"productsBlockId": "sw-slider-products-<?php echo $slider->getId() ?>", "sliderId": "sw-slider-<?php echo $slider->getId() ?>"}}'>
+        <?php foreach ($block->getSlides() as $slide): ?>
+            <?php /* @var Scandiweb\Slider\Model\Slide $slide */ ?>
+
+            <?php $maps = $block->getSlideMaps($slide->getSlideId()) ?>
+
+            <?php if (empty($maps)): ?>
+                <?php continue; ?>
+            <?php endif ?>
+
+            <map name="map-<?php echo $slide->getSlideId(); ?>">
+                <?php foreach ($block->getSlideMaps($slide->getSlideId()) as $map): ?>
+                    <?php /* @var Scandiweb\Slider\Model\Map $map */ ?>
+
+                    <area shape="poly" data-product-block-id="slider-<?php echo $slide->getSliderId() ?>-product-<?php echo $map->getProductId() ?>"
+                          coords="<?php echo $map->getCoordinates(); ?>" href="<?php echo $block->getMapUrl($map) ?>"
+                          title="<?php echo $map->getTitle() ?>" alt="<?php echo $map->getTitle() ?>"/>
+                <?php endforeach ?>
+            </map>
+        <?php endforeach ?>
+    </div>
+<?php endif ?>
+
+
+<?php if ($productCollection = $block->getMapProducts()): ?>
+    <div id="sw-slider-products-<?php echo $slider->getId() ?>" class="sw-slider-products block widget">
+        <?php foreach ($productCollection as $product): ?>
+            <?php /* @var \Magento\Catalog\Model\Product $product */ ?>
+            <div class="product-item-info" data-product-url="<?php echo $block->getProductUrl($product) ?>" id="slider-<?php echo $slider->getId() ?>-product-<?php echo $product->getId() ?>" style="display:none;">
+                <div class="image">
+                    <?php echo $block->getImage($product, 'category_page_grid')->toHtml() ?>
+                </div>
+                <div class="info">
+                    <p class="name"><?php echo $product->getName() ?></p>
+                    <?php echo $this->getProductPrice($product) ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif ?>
+
+<script type="text/javascript">
+    //<![CDATA[
+    require(['jquery', 'scandiweb/slider', 'scandiweb/rwd-image-maps'], function($) {
+
+        /* Init Slider */
+        $('#sw-slider-<?php echo $slider->getId() ?>').slick({
+            dots: <?php echo $slider->getShowMenu() ? 'true' : 'false' ?>,
+            arrows: <?php echo $slider->getShowNavigation() ? 'true' : 'false' ?>,
+            speed: <?php echo $slider->getAnimationSpeed() ? $slider->getAnimationSpeed() : 300 ?>,
+            autoplay: true,
+            autoplaySpeed: <?php echo $slider->getSlideSpeed() ? $slider->getSlideSpeed() : 5000 ?>,
+            slidesToShow: <?php echo $slider->getSlidesToDisplay() ? $slider->getSlidesToDisplay() : 1 ?>,
+            slidesToScroll: <?php echo $slider->getSlidesToScroll() ? $slider->getSlidesToScroll() : 1 ?>,
+            responsive: [
+                {
+                    breakpoint: 1025,
+                    settings: {
+                        slidesToShow: <?php echo $slider->getSlidesToDisplayTablet() ? $slider->getSlidesToDisplayTablet() : 1 ?>,
+                        slidesToScroll: <?php echo $slider->getSlidesToScrollTablet() ? $slider->getSlidesToScrollTablet() : 1 ?>
+                    }
+                },
+                {
+                    breakpoint: 641,
+                    settings: {
+                        slidesToShow: <?php echo $slider->getSlidesToDisplayMobile() ? $slider->getSlidesToDisplayMobile() : 1 ?>,
+                        slidesToScroll: <?php echo $slider->getSlidesToScrollMobile() ? $slider->getSlidesToScrollMobile() : 1 ?>
+                    }
+                }
+            ]
+        });
+
+        /* Init image maps */
+        $('#sw-slider-<?php echo $slider->getId() ?>').find('img[usemap]').rwdImageMaps();
+    });
+    //]]>
+</script>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Scandiweb_Slider::slider" title="Slider" module="Scandiweb_Slider" sortOrder="50" resource="Scandiweb_Slider::slider" parent="Scandiweb_Core::all"/>
+        <add id="Scandiweb_Slider::slider_manage" title="Slider Manager" module="Scandiweb_Slider" sortOrder="10" parent="Scandiweb_Slider::slider" action="slideradmin/slider" resource="Scandiweb_Slider::slider"/>
+    </menu>
+</config>

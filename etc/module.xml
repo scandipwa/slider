@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb/Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @author      Emils Brass <info@scandiweb.com>
+ * @copyright   Copyright (c) 2018 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Scandiweb_Slider" setup_version="1.0.14">
+        <sequence>
+            <module name="Magento_Backend"/>
+        </sequence>
+    </module>
+</config>

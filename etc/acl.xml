@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::content">
+                    <resource id="Scandiweb_Slider::slider" title="Slider" sortOrder="110">
+                        <resource id="Scandiweb_Slider::slider_manage" title="Manage Sliders" sortOrder="10">
+                            <resource id="Scandiweb_Slider::slider_save" title="Save Slider" sortOrder="10" />
+                            <resource id="Scandiweb_Slider::slider_delete" title="Delete Slider" sortOrder="20" />
+                        </resource>
+                        <resource id="Scandiweb_Slider::slide_manage" title="Manage Slides" sortOrder="20">
+                            <resource id="Scandiweb_Slider::slide_save" title="Save Slide" sortOrder="10" />
+                            <resource id="Scandiweb_Slider::slide_delete" title="Delete Slide" sortOrder="20" />
+                        </resource>
+                        <resource id="Scandiweb_Slider::map_manage" title="Manage Image Maps" sortOrder="30">
+                            <resource id="Scandiweb_Slider::map_save" title="Save Image Map" sortOrder="10" />
+                            <resource id="Scandiweb_Slider::map_delete" title="Delete Image Map" sortOrder="20" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

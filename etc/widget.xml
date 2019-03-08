@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="scandiweb_slider" class="Scandiweb\Slider\Block\Widget\Slider" placeholder_image="Magento_Catalog::images/product_widget_link.png">
+        <label translate="true">Slider</label>
+        <description translate="true">Display image slider</description>
+        <parameters>
+            <parameter name="slider_id" xsi:type="block" visible="true" required="true" sort_order="10">
+                <label translate="true">Slider</label>
+                <block class="\Scandiweb\Slider\Block\Adminhtml\Slider\Widget\Chooser">
+                    <data>
+                        <item name="button" xsi:type="array">
+                            <item name="open" xsi:type="string" translate="true">Select Slider...</item>
+                        </item>
+                    </data>
+                </block>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

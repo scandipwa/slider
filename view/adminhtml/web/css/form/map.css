@@ -1,0 +1,42 @@
+.field-coordinates .admin__field-control {
+    overflow-x: scroll;
+}
+
+.field-coordinates .admin__field-control textarea,
+.field-coordinates .admin__field-control canvas {
+    margin-bottom: 40px;
+}
+
+.admin__fieldset .field-product_chooser {
+    margin-bottom: 0;
+}
+
+.admin__fieldset .field-product_chooser .admin__field-control label {
+    margin-top: 8px;
+    display: inline-block;
+}
+
+.admin__fieldset .field-chooserproduct_chooser {
+    margin-top: 0;
+}
+
+.admin__fieldset .field-chooserproduct_chooser .mage-error {
+    margin-bottom: 20px;
+}
+
+.admin__fieldset .field-coordinates label {
+    display: none;
+}
+
+.admin__fieldset .field-coordinates textarea {
+    display: none;
+}
+
+.admin__fieldset .field-coordinates .admin__field-control {
+    width: 100%;
+}
+
+.admin__fieldset .field-coordinates .btn {
+    margin-bottom: 20px;
+}
+

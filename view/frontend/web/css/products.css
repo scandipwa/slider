@@ -1,0 +1,28 @@
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+
+.page-main { z-index: 50; }
+.sw-slider-slide { position: relative; }
+.sw-slider-products .product-item-info {
+    background:#fff;
+    padding:10px;
+}
+.sw-slider-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,0.6);
+    padding: 1em;
+    margin: 2em 4em;
+}
+
+.sw-slider-text.a-right { text-align: right; }
+.sw-slider-text.a-left { text-align: left; }
+.sw-slider-text.a-center { text-align: center; }
+

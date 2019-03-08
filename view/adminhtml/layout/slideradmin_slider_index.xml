@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Artis Ozolins <artis@scandiweb.com>
+ * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Manage Sliders</title>
+    </head>
+    <body>
+        <referenceBlock name="page.title">
+            <action method="setPageTitle">
+                <argument name="pageTitle" xsi:type="string">Manage Sliders</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Scandiweb\Slider\Block\Adminhtml\Slider" name="adminhtml.block.slider.container">
+                <block class="Scandiweb\Slider\Block\Adminhtml\Slider\Grid" name="adminhtml.block.slider.grid" as="grid"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

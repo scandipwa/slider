@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Scandiweb_Slider
+ *
+ * @category    Scandiweb
+ * @package     Scandiweb_Slider
+ * @author      Raivis Dejus <info@scandiweb.com>
+ * @copyright   Copyright (c) 2017 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Scandiweb_Slider::css/slider-admin.css"/>
+    </head>
+</page>

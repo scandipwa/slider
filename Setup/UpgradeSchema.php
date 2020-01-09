@@ -36,6 +36,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addExtraWidthSlideField($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.0.15', '<')) {
+            $this->modifySlidesQtyPerPageTypes($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -517,6 +521,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
 
         $setup->getConnection()->createTable($table);
+    }
+
+    protected function modifySlidesQtyPerPageTypes(SchemaSetupInterface $setup) {
+        $connection = $setup->getConnection();
+
+        $connection->modifyColumn('scandiweb_slider', 'slides_to_display', ['type' => Table::TYPE_FLOAT, 'length' => '10,2', 'default' => 0]);
+        $connection->modifyColumn('scandiweb_slider', 'slides_to_display_tablet', ['type' => Table::TYPE_FLOAT, 'length' => '10,2', 'default' => 0]);
+        $connection->modifyColumn('scandiweb_slider', 'slides_to_display_mobile', ['type' => Table::TYPE_FLOAT, 'length' => '10,2', 'default' => 0]);
     }
 }
 

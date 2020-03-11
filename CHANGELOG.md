@@ -1,5 +1,8 @@
 Scandiweb_Slider changelog
 ========================
+1.0.15
+- Adding two separate image fields - desktop and mobile images
+
 1.0.13
 - Adding preparation of images for srcsets
 

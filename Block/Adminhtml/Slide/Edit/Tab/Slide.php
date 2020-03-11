@@ -172,13 +172,24 @@ class Slide extends \Magento\Backend\Block\Widget\Form\Generic implements
         );
 
         $block1->addField(
-            'image',
+            'mobile_image',
             'image',
             [
-                'name' => 'image',
-                'label' => __('Image'),
-                'title' => __('Image'),
-                'required' => true,
+                'name' => 'mobile_image',
+                'label' => __('Mobile Image'),
+                'title' => __('Mobile Image'),
+                'required' => true
+            ]
+        );
+
+        $block1->addField(
+            'desktop_image',
+            'image',
+            [
+                'name' => 'desktop_image',
+                'label' => __('Desktop Image'),
+                'title' => __('Desktop Image'),
+                'required' => true
             ]
         );
 
@@ -260,12 +271,22 @@ class Slide extends \Magento\Backend\Block\Widget\Form\Generic implements
         );
 
         $block2->addField(
-            'image_2',
+            'mobile_image_2',
             'image',
             [
-                'name' => 'image_2',
-                'label' => __('Image'),
-                'title' => __('Image'),
+                'name' => 'mobile_image_2',
+                'label' => __('Mobile Image'),
+                'title' => __('Mobile Image')
+            ]
+        );
+
+        $block2->addField(
+            'desktop_image_2',
+            'image',
+            [
+                'name' => 'desktop_image_2',
+                'label' => __('Desktop Image'),
+                'title' => __('Desktop Image')
             ]
         );
 
@@ -336,12 +357,22 @@ class Slide extends \Magento\Backend\Block\Widget\Form\Generic implements
         );
 
         $block3->addField(
-            'image_3',
+            'mobile_image_3',
             'image',
             [
-                'name' => 'image_3',
-                'label' => __('Image'),
-                'title' => __('Image'),
+                'name' => 'mobile_image_3',
+                'label' => __('Mobile Image'),
+                'title' => __('Mobile Image')
+            ]
+        );
+
+        $block3->addField(
+            'desktop_image_3',
+            'image',
+            [
+                'name' => 'desktop_image_3',
+                'label' => __('Desktop Image'),
+                'title' => __('Desktop Image')
             ]
         );
 
@@ -404,9 +435,12 @@ class Slide extends \Magento\Backend\Block\Widget\Form\Generic implements
         );
 
         $values = $model->getData();
-        $values['image'] = $model->getImageUrl();
-        $values['image_2'] = $model->getImage2Url();
-        $values['image_3'] = $model->getImage3Url();
+        $values['mobile_image'] = $model->getMobileImageUrl();
+        $values['desktop_image'] = $model->getDesktopImageUrl();
+        $values['mobile_image_2'] = $model->getMobileImageUrl2();
+        $values['desktop_image_2'] = $model->getDesktopImageUrl2();
+        $values['mobile_image_3'] = $model->getMobileImageUrl3();
+        $values['desktop_image_3'] = $model->getDesktopImageUrl3();
 
         $form->setValues($values);
         $this->setForm($form);

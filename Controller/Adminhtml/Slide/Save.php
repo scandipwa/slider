@@ -26,9 +26,12 @@ class Save extends \Magento\Backend\App\Action
     public function execute()
     {
         $data = $this->getRequest()->getParams();
-        $images['image'] = $this->getRequest()->getParam('image');
-        $images['image_2'] = $this->getRequest()->getParam('image_2');
-        $images['image_3'] = $this->getRequest()->getParam('image_3');
+        $images['desktop_image'] = $this->getRequest()->getParam('desktop_image');
+        $images['mobile_image'] = $this->getRequest()->getParam('mobile_image');
+        $images['desktop_image_2'] = $this->getRequest()->getParam('desktop_image_2');
+        $images['mobile_image_2'] = $this->getRequest()->getParam('mobile_image_2');
+        $images['desktop_image_3'] = $this->getRequest()->getParam('desktop_image_3');
+        $images['mobile_image_3'] = $this->getRequest()->getParam('mobile_image_3');
 
         /* @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -40,9 +43,12 @@ class Save extends \Magento\Backend\App\Action
             $model->setData($data);
 
             $imageKeys = [
-                'image',
-                'image_2',
-                'image_3'
+                'desktop_image',
+                'mobile_image',
+                'desktop_image_2',
+                'mobile_image_2',
+                'desktop_image_3',
+                'mobile_image_3'
             ];
 
             try {

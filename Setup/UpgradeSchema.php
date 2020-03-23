@@ -36,6 +36,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addExtraWidthSlideField($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.0.15', '<')) {
+            $this->addExtraImageField($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -197,6 +201,84 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'nullable' => true,
                 'comment' => 'Width of first Block',
                 'after' => 'slide_text_position'
+            ]
+        );
+    }
+
+    protected function addExtraImageField(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'image',
+            'desktop_image',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Desktop Image location',
+                'after' => 'title'
+            ]
+        );
+
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'image_2',
+            'desktop_image_2',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Desktop Image 2 location',
+                'after' => 'embed_code'
+            ]
+        );
+
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'image_3',
+            'desktop_image_3',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Desktop Image 3 location',
+                'after' => 'slide_text_position_2'
+            ]
+        );
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'mobile_image',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Mobile Image location',
+                'after' => 'desktop_image'
+            ]
+        );
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'mobile_image_2',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Mobile Image 2 location',
+                'after' => 'desktop_image_2'
+            ]
+        );
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable('scandiweb_slider_slide'),
+            'mobile_image_3',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment' => 'Mobile Image 3 location',
+                'after' => 'desktop_image_3'
             ]
         );
     }

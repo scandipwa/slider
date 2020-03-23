@@ -16,12 +16,18 @@ namespace Scandiweb\Slider\Model;
  * @method \Scandiweb\Slider\Model\Slider setSliderId(int $value)
  * @method string getTitle()
  * @method \Scandiweb\Slider\Model\Slider setTitle(string $value)
- * @method string getImage()
- * @method \Scandiweb\Slider\Model\Slider setImage(string $value)
- * @method string getImage2()
- * @method \Scandiweb\Slider\Model\Slider setImage2(string $value)
- * @method string getImage3()
- * @method \Scandiweb\Slider\Model\Slider setImage3(string $value)
+ * @method string getDesktopImage()
+ * @method \Scandiweb\Slider\Model\Slider setDesktopImage(string $value)
+ * @method string getMobileImage()
+ * @method \Scandiweb\Slider\Model\Slider setMobileImage(string $value)
+ * @method string getDesktopImage2()
+ * @method \Scandiweb\Slider\Model\Slider setDesktopImage2(string $value)
+ * @method string getMobileImage2()
+ * @method \Scandiweb\Slider\Model\Slider setMobileImage2(string $value)
+ * @method string getDesktopImage3()
+ * @method \Scandiweb\Slider\Model\Slider setDesktopImage3(string $value)
+ * @method string getMobileImage3()
+ * @method \Scandiweb\Slider\Model\Slider setMobileImage3(string $value)
  * @method bool getIsActive()
  * @method \Scandiweb\Slider\Model\Slider setIsActive(bool $value)
  * @method int getPosition()
@@ -96,45 +102,90 @@ class Slide extends \Magento\Framework\Model\AbstractModel
      * @param  bool $secure
      * @return string|bool
      */
-    public function getImageUrl($secure = false)
+    public function getDesktopImageUrl($secure = false)
     {
-        if (!$this->getImage()) {
+        if (!$this->getDesktopImage()) {
             return false;
         }
 
         $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
 
-        return $base . $this->getImage();
+        return $base . $this->getDesktopImage();
     }
 
     /**
      * @param  bool $secure
      * @return string|bool
      */
-    public function getImageUrl2($secure = false)
+    public function getMobileImageUrl($secure = false)
     {
-        if (!$this->getImage2()) {
+        if (!$this->getMobileImage()) {
             return false;
         }
 
         $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
 
-        return $base . $this->getImage2();
+        return $base . $this->getMobileImage();
     }
 
     /**
      * @param  bool $secure
      * @return string|bool
      */
-    public function getImageUrl3($secure = false)
+    public function getDesktopImageUrl2($secure = false)
     {
-        if (!$this->getImage3()) {
+        if (!$this->getDesktopImage2()) {
             return false;
         }
 
         $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
 
-        return $base . $this->getImage3();
+        return $base . $this->getDesktopImage2();
+    }
+
+    /**
+     * @param  bool $secure
+     * @return string|bool
+     */
+    public function getMobileImageUrl2($secure = false)
+    {
+        if (!$this->getMobileImage2()) {
+            return false;
+        }
+
+        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
+
+        return $base . $this->getMobileImage2();
+    }
+
+    /**
+     * @param  bool $secure
+     * @return string|bool
+     */
+    public function getDesktopImageUrl3($secure = false)
+    {
+        if (!$this->getDesktopImage3()) {
+            return false;
+        }
+
+        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
+
+        return $base . $this->getDesktopImage3();
+    }
+
+    /**
+     * @param  bool $secure
+     * @return string|bool
+     */
+    public function getMobileImageUrl3($secure = false)
+    {
+        if (!$this->getMobileImage3()) {
+            return false;
+        }
+
+        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
+
+        return $base . $this->getMobileImage3();
     }
 
     /**

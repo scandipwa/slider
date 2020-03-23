@@ -52,22 +52,37 @@ class Image extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractR
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        $srcImage = $this->getImageUrl($row, 'image');
-        $srcImage2 = $this->getImageUrl($row, 'image_2');
-        $srcImage3 = $this->getImageUrl($row, 'image_3');
+        $desktopImage = $this->getImageUrl($row, 'desktop_image');
+        $mobileImage = $this->getImageUrl($row, 'mobile_image');
+        $desktopImage2 = $this->getImageUrl($row, 'desktop_image_2');
+        $mobileImage2 = $this->getImageUrl($row, 'mobile_image_2');
+        $desktopImage3 = $this->getImageUrl($row, 'desktop_image_3');
+        $mobileImage3 = $this->getImageUrl($row, 'mobile_image_3');
 
         $result = '';
 
-        if ($srcImage) {
-            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$srcImage.'">';
+        if ($desktopImage) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$desktopImage.'">';
         }
 
-        if ($srcImage2) {
-            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$srcImage2.'">';
+        if ($mobileImage) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$mobileImage.'">';
         }
 
-        if ($srcImage3) {
-            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$srcImage3.'">';
+        if ($desktopImage2) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$desktopImage2.'">';
+        }
+
+        if ($mobileImage2) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$mobileImage2.'">';
+        }
+
+        if ($desktopImage3) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$desktopImage3.'">';
+        }
+
+        if ($mobileImage3) {
+            $result .= '<image width="100%" style="max-width: 100px;"  src="'.$mobileImage3.'">';
         }
 
 

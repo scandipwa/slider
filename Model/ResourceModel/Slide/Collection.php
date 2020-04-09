@@ -119,4 +119,20 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
         return $this;
     }
+
+    /**
+     * @return $this
+     */
+    protected function _afterLoadData()
+    {
+        parent::_afterLoadData();
+
+        $collection = clone $this;
+
+        if (count($collection)) {
+            $this->_eventManager->dispatch('scandiweb_slider_slide_collection_load_after', ['collection' => $collection]);
+        }
+
+        return $this;
+    }
 }

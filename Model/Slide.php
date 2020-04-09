@@ -9,6 +9,9 @@
  */
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractModel;
+
 /**
  * @method int getSlideId()
  * @method \Scandiweb\Slider\Model\Slider setSlideId(int $value)
@@ -69,8 +72,25 @@ namespace Scandiweb\Slider\Model;
  * @method string getSlideWidthClass()
  * @method \Scandiweb\Slider\Model\Slider setSlideWidthClass(string $value)
  */
-class Slide extends \Magento\Framework\Model\AbstractModel
+class Slide extends AbstractModel implements IdentityInterface
 {
+    /**
+     * Slide cache tag
+     */
+    const CACHE_TAG = 'sw_sld';
+
+    /**
+     * @var string
+     */
+    protected $_cacheTag = 'scandiweb_slider_slide';
+
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'scandiweb_slider_slide';
+
     /* @var \Magento\Store\Model\StoreManagerInterface $_storeManager */
     protected $_storeManager;
 
@@ -96,6 +116,16 @@ class Slide extends \Magento\Framework\Model\AbstractModel
     ) {
         $this->_storeManager = $storeManager;
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+    }
+
+    /**
+     * Return unique ID(s) for each object in system
+     *
+     * @return array
+     */
+    public function getIdentities()
+    {
+        return [self::CACHE_TAG . '_' . $this->getId(), Slider::CACHE_TAG . '_' . $this->getSliderId()];
     }
 
     /**

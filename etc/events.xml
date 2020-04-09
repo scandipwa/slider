@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ScandiPWA_Cache
+ *
+ * @category    ScandiPWA
+ * @package     ScandiPWA_Cache
+ * @author      Ilja Lapkovskis <ilja@scandiweb.com | info@scandiweb.com>
+ * @copyright   Copyright (c) 2019 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="scandiweb_slider_slider_collection_load_after">
+        <observer name="pq_cc_slider" instance="ScandiPWA\Cache\Observer\Response\TagEntityResponse"/>
+    </event>
+    <event name="scandiweb_slider_slider_save_after">
+        <observer name="pq_cc_slider" instance="ScandiPWA\Cache\Observer\FlushVarnishObserver"/>
+    </event>
+    <event name="scandiweb_slider_slide_collection_load_after">
+        <observer name="pq_cc_slide" instance="ScandiPWA\Cache\Observer\Response\TagEntityResponse"/>
+    </event>
+    <event name="scandiweb_slider_slide_save_after">
+        <observer name="pq_cc_slide" instance="ScandiPWA\Cache\Observer\FlushVarnishObserver"/>
+    </event>
+</config>

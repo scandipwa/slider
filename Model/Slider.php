@@ -9,46 +9,76 @@
  */
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractModel;
+
 /**
  * @method int getSliderId()
- * @method \Scandiweb\Slider\Model\Slider setSliderId(int $value)
+ * @method Slider setSliderId(int $value)
  * @method int getBlockId()
- * @method \Scandiweb\Slider\Model\Slider setBlockId(int $value)
+ * @method Slider setBlockId(int $value)
  * @method string getTitle()
- * @method \Scandiweb\Slider\Model\Slider setTitle(string $value)
+ * @method Slider setTitle(string $value)
  * @method bool getIsActive()
- * @method \Scandiweb\Slider\Model\Slider setIsActive(bool $value)
+ * @method Slider setIsActive(bool $value)
  * @method bool getShowMenu()
- * @method \Scandiweb\Slider\Model\Slider setShowMenu(bool $value)
+ * @method Slider setShowMenu(bool $value)
  * @method bool getShowNavigation()
- * @method \Scandiweb\Slider\Model\Slider setShowNavigation(bool $value)
+ * @method Slider setShowNavigation(bool $value)
  * @method int getSlideSpeed()
- * @method \Scandiweb\Slider\Model\Slider setSlideSpeed(int $value)
+ * @method Slider setSlideSpeed(int $value)
  * @method int getPosition()
- * @method \Scandiweb\Slider\Model\Slider setPosition(int $value)
+ * @method Slider setPosition(int $value)
  * @method int getAnimationSpeed()
- * @method \Scandiweb\Slider\Model\Slider setAnimationSpeed(int $value)
+ * @method Slider setAnimationSpeed(int $value)
  * @method int getSlidesToDisplay()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToDisplay(int $value)
+ * @method Slider setSlidesToDisplay(int $value)
  * @method int getSlidesToScroll()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToScroll(int $value)
+ * @method Slider setSlidesToScroll(int $value)
  * @method bool getLazyLoad()
- * @method \Scandiweb\Slider\Model\Slider setLazyLoad(bool $value)
+ * @method Slider setLazyLoad(bool $value)
  * @method int getSlidesToDisplayTablet()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToDisplayTablet(int $value)
+ * @method Slider setSlidesToDisplayTablet(int $value)
  * @method int getSlidesToScrollTablet()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToScrollTablet(int $value)
+ * @method Slider setSlidesToScrollTablet(int $value)
  * @method int getSlidesToDisplayMobile()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToDisplayMobile(int $value)
+ * @method Slider setSlidesToDisplayMobile(int $value)
  * @method int getSlidesToScrollMobile()
- * @method \Scandiweb\Slider\Model\Slider setSlidesToScrollMobile(int $value)
+ * @method Slider setSlidesToScrollMobile(int $value)
  */
-class Slider extends \Magento\Framework\Model\AbstractModel
+class Slider extends AbstractModel implements IdentityInterface
 {
+    /**
+     * Slider cache tag
+     */
+    const CACHE_TAG = 'sw_sldr';
+
     const MEDIA_PATH = 'scandiweb/slider';
+
+    /**
+     * @var string
+     */
+    protected $_cacheTag = 'scandiweb_slider_slider';
+
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'scandiweb_slider_slider';
 
     public function _construct()
     {
         $this->_init('Scandiweb\Slider\Model\ResourceModel\Slider');
+    }
+
+    /**
+     * Return unique ID(s) for each object in system
+     *
+     * @return array
+     */
+    public function getIdentities()
+    {
+        return [self::CACHE_TAG . '_' . $this->getId()];
     }
 }

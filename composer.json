@@ -5,6 +5,7 @@
     "require": {
         "scandiweb/module-core": "~0.1.2",
         "claviska/simpleimage": "^3.3",
+        "rosell-dk/webp-convert": "^2.3",
         "scandiweb/locale-resolver-fix": "^1.0"
     },
     "autoload": {

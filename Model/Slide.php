@@ -11,6 +11,7 @@ namespace Scandiweb\Slider\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
+use WebPConvert\WebPConvert;
 
 /**
  * @method int getSlideId()
@@ -245,6 +246,23 @@ class Slide extends AbstractModel implements IdentityInterface
                 ->fromFile($originalImagePath)
                 ->resize($size)
                 ->toFile($newFileName, \mime_content_type($originalImagePath));
+
+            if (in_array($fileNameParts['extension'], ['png', 'jpg'])) {
+                WebPConvert::convert(
+                    $newFileName,
+                    preg_replace('/.[^.]*$/', '.webp', $newFileName),
+                    []
+                );
+            }
+
+        }
+
+        if (in_array($fileNameParts['extension'], ['png', 'jpg'])) {
+            WebPConvert::convert(
+                $originalImagePath,
+                preg_replace('/.[^.]*$/', '.webp', $originalImagePath),
+                []
+            );
         }
     }
 }

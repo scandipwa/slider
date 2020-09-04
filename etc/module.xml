@@ -1,21 +1,26 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Scandiweb_Slider
+ * ScandiPWA - Progressive Web App for Magento
  *
- * @category    Scandiweb
- * @package     Scandiweb/Slider
- * @author      Artis Ozolins <artis@scandiweb.com>
- * @author      Emils Brass <info@scandiweb.com>
- * @copyright   Copyright (c) 2018 Scandiweb, Ltd (https://scandiweb.com)
+ * Copyright © Scandiweb, Inc. All rights reserved.
+ * See LICENSE for license details.
+ *
+ * @license OSL-3.0 (Open Software License ("OSL") v. 3.0)
+ * @link https://github.com/scandipwa/quote-graphql
  */
 -->
-
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Scandiweb_Slider" setup_version="1.0.15">
+    <module name="Scandiweb_Slider">
         <sequence>
-            <module name="Magento_Backend"/>
+            <module name="Magento_Catalog" />
+            <module name="Magento_Cms" />
+            <module name="Magento_Backend" />
+            <module name="Magento_Widget" />
+            <module name="Magento_MediaStorage" />
+            <module name="Magento_Store" />
+            <module name="Scandiweb_Core"/>
         </sequence>
     </module>
 </config>

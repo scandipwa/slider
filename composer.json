@@ -11,8 +11,7 @@
         "magento/module-media-storage": "*",
         "magento/module-store": "*",
         "scandiweb/module-core": "~0.1.2",
-        "claviska/simpleimage": "^3.3",
-        "scandiweb/locale-resolver-fix": "^1.0"
+        "claviska/simpleimage": "^3.3"
     },
     "autoload": {
         "files": [

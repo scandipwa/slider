@@ -241,10 +241,12 @@ class Slide extends AbstractModel implements IdentityInterface
             $newFileName = $fileNameParts['dirname'] . '/' .
                 $fileNameParts['filename'] . '-' . $size . 'w.' . $fileNameParts['extension'];
 
+            $imageInfo = getimagesize($originalImagePath);
+
             $image
                 ->fromFile($originalImagePath)
                 ->resize($size)
-                ->toFile($newFileName, \mime_content_type($originalImagePath));
+                ->toFile($newFileName, $imageInfo['mime']);
         }
     }
 }

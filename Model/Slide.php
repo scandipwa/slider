@@ -1,36 +1,31 @@
 <?php
 /**
- * Scandiweb_Slider
- *
  * @category    Scandiweb
  * @package     Scandiweb_Slider
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
+declare(strict_types=1);
+
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\UrlInterface;
+use Scandiweb\Slider\Api\Data\SlideInterface;
+use Scandiweb\Slider\Model\ResourceModel\Slide as SlideResourceModel;
+use Scandiweb\Slider\Model\ResourceModel\Slide\Collection as SlideCollection;
+
 
 /**
- * @method int getSlideId()
- * @method \Scandiweb\Slider\Model\Slider setSlideId(int $value)
  * @method int getSliderId()
  * @method \Scandiweb\Slider\Model\Slider setSliderId(int $value)
  * @method string getTitle()
  * @method \Scandiweb\Slider\Model\Slider setTitle(string $value)
- * @method string getDesktopImage()
- * @method \Scandiweb\Slider\Model\Slider setDesktopImage(string $value)
- * @method string getMobileImage()
- * @method \Scandiweb\Slider\Model\Slider setMobileImage(string $value)
- * @method string getDesktopImage2()
- * @method \Scandiweb\Slider\Model\Slider setDesktopImage2(string $value)
- * @method string getMobileImage2()
- * @method \Scandiweb\Slider\Model\Slider setMobileImage2(string $value)
- * @method string getDesktopImage3()
- * @method \Scandiweb\Slider\Model\Slider setDesktopImage3(string $value)
- * @method string getMobileImage3()
- * @method \Scandiweb\Slider\Model\Slider setMobileImage3(string $value)
  * @method bool getIsActive()
  * @method \Scandiweb\Slider\Model\Slider setIsActive(bool $value)
  * @method int getPosition()
@@ -39,45 +34,18 @@ use Magento\Framework\Model\AbstractModel;
  * @method \Scandiweb\Slider\Model\Slider setStartTime(string $value)
  * @method string getEndTime()
  * @method \Scandiweb\Slider\Model\Slider setEndTime(string $value)
- * @method string getSlideLink()
- * @method \Scandiweb\Slider\Model\Slider setSlideLink(string $value)
- * @method string getSlideLink2()
- * @method \Scandiweb\Slider\Model\Slider setSlideLink2(string $value)
- * @method string getSlideLink3()
- * @method \Scandiweb\Slider\Model\Slider setSlideLink3(string $value)
- * @method string getDisplayTitle()
- * @method \Scandiweb\Slider\Model\Slider setDisplayTitle(string $value)
- * @method string getDisplayTitle2()
- * @method \Scandiweb\Slider\Model\Slider setDisplayTitle2(string $value)
- * @method string getDisplayTitle3()
- * @method \Scandiweb\Slider\Model\Slider setDisplayTitle3(string $value)
- * @method string getSlideText()
- * @method \Scandiweb\Slider\Model\Slider setSlideText(string $value)
- * @method string getSlideText2()
- * @method \Scandiweb\Slider\Model\Slider setSlideText2(string $value)
- * @method string getSlideText3()
- * @method \Scandiweb\Slider\Model\Slider setSlideText3(string $value)
- * @method string getEmbedCode()
- * @method \Scandiweb\Slider\Model\Slider setEmbedCode(string $value)
- * @method string getEmbedCode2()
- * @method \Scandiweb\Slider\Model\Slider setEmbedCode2(string $value)
- * @method string getEmbedCode3()
- * @method \Scandiweb\Slider\Model\Slider setEmbedCode3(string $value)
- * @method int getSlideTextPosition()
- * @method \Scandiweb\Slider\Model\Slider setSlideTextPosition(int $value)
- * @method int getSlideTextPosition2()
- * @method \Scandiweb\Slider\Model\Slider setSlideTextPosition2(int $value)
- * @method int getSlideTextPosition3()
- * @method \Scandiweb\Slider\Model\Slider setSlideTextPosition3(int $value)
- * @method string getSlideWidthClass()
- * @method \Scandiweb\Slider\Model\Slider setSlideWidthClass(string $value)
  */
-class Slide extends AbstractModel implements IdentityInterface
+class Slide extends AbstractModel implements SlideInterface, IdentityInterface
 {
     /**
      * Slide cache tag
      */
     const CACHE_TAG = 'sw_sld';
+
+    /**
+     * Array of widths image should be resized to
+     */
+    const SUPPORTED_IMAGE_SIZES = [375, 768, 1024];
 
     /**
      * @var string
@@ -91,7 +59,9 @@ class Slide extends AbstractModel implements IdentityInterface
      */
     protected $_eventPrefix = 'scandiweb_slider_slide';
 
-    /* @var \Magento\Store\Model\StoreManagerInterface $_storeManager */
+    /**
+     * @var StoreManagerInterface
+     */
     protected $_storeManager;
 
     public function _construct()
@@ -107,15 +77,22 @@ class Slide extends AbstractModel implements IdentityInterface
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Scandiweb\Slider\Model\ResourceModel\Slide $resource = null,
-        \Scandiweb\Slider\Model\ResourceModel\Slide\Collection $resourceCollection = null,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        Context $context,
+        Registry $registry,
+        SlideResourceModel $resource = null,
+        SlideCollection $resourceCollection = null,
+        StoreManagerInterface $storeManager,
         array $data = []
     ) {
+        parent::__construct(
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
         $this->_storeManager = $storeManager;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
 
     /**
@@ -129,106 +106,479 @@ class Slide extends AbstractModel implements IdentityInterface
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getDesktopImageUrl($secure = false)
+    public function getFirstDesktopImageLocation()
     {
-        if (!$this->getDesktopImage()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getDesktopImage();
+        return parent::getData(self::FIRST_DESKTOP_IMAGE);
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getMobileImageUrl($secure = false)
+    public function setFirstDesktopImageLocation($image)
     {
-        if (!$this->getMobileImage()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getMobileImage();
+        return $this->setData(self::FIRST_DESKTOP_IMAGE, $image);
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getDesktopImageUrl2($secure = false)
+    public function getFirstMobileImageLocation()
     {
-        if (!$this->getDesktopImage2()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getDesktopImage2();
+        return parent::getData(self::FIRST_MOBILE_IMAGE);
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getMobileImageUrl2($secure = false)
+    public function setFirstMobileImageLocation($image)
     {
-        if (!$this->getMobileImage2()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getMobileImage2();
+        return $this->setData(self::FIRST_MOBILE_IMAGE, $image);
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getDesktopImageUrl3($secure = false)
+    public function getFirstLink()
     {
-        if (!$this->getDesktopImage3()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getDesktopImage3();
+        return parent::getData(self::FIRST_LINK);
     }
 
     /**
-     * @param  bool $secure
-     * @return string|bool
+     * {@inheritdoc}
      */
-    public function getMobileImageUrl3($secure = false)
+    public function setFirstLink($link)
     {
-        if (!$this->getMobileImage3()) {
-            return false;
-        }
-
-        $base = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $secure);
-
-        return $base . $this->getMobileImage3();
+        return $this->setData(self::FIRST_LINK, $link);
     }
 
     /**
-     * Will return an array of widths the original image should be resized to
+     * {@inheritdoc}
+     */
+    public function getFirstLinkText()
+    {
+        return parent::getData(self::FIRST_LINK_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFirstLinkText($text)
+    {
+        return $this->setData(self::FIRST_LINK_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstTitle()
+    {
+        return parent::getData(self::FIRST_DISPLAY_TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFirstTitle($title)
+    {
+        return $this->setData(self::FIRST_DISPLAY_TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstText()
+    {
+        return parent::getData(self::FIRST_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFirstText($text)
+    {
+        return $this->setData(self::FIRST_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstEmbedCode()
+    {
+        return parent::getData(self::FIRST_EMBED_CODE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFirstEmbedCode($embedCode)
+    {
+        return $this->setData(self::FIRST_EMBED_CODE, $embedCode);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstTextPosition()
+    {
+        return parent::getData(self::FIRST_TEXT_POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFirstTextPosition($position)
+    {
+        return $this->setData(self::FIRST_TEXT_POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWidthClass()
+    {
+        return parent::getData(self::WIDTH_CLASS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWidthClass($widthClass)
+    {
+        return $this->setData(self::WIDTH_CLASS, $widthClass);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondDesktopImageLocation()
+    {
+        return parent::getData(self::SECOND_DESKTOP_IMAGE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondDesktopImageLocation($image)
+    {
+        return $this->setData(self::SECOND_DESKTOP_IMAGE, $image);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondMobileImageLocation()
+    {
+        return parent::getData(self::SECOND_MOBILE_IMAGE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondMobileImageLocation($image)
+    {
+        return $this->setData(self::SECOND_MOBILE_IMAGE, $image);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondLink()
+    {
+        return parent::getData(self::SECOND_LINK);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondLink($link)
+    {
+        return $this->setData(self::SECOND_LINK, $link);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondLinkText()
+    {
+        return parent::getData(self::SECOND_LINK_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondLinkText($text)
+    {
+        return $this->setData(self::SECOND_LINK_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondTitle()
+    {
+        return parent::getData(self::SECOND_DISPLAY_TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondTitle($title)
+    {
+        return $this->setData(self::SECOND_DISPLAY_TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondText()
+    {
+        return parent::getData(self::SECOND_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondText($text)
+    {
+        return $this->setData(self::SECOND_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondEmbedCode()
+    {
+        return parent::getData(self::SECOND_EMBED_CODE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondEmbedCode($embedCode)
+    {
+        return $this->setData(self::SECOND_EMBED_CODE, $embedCode);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondTextPosition()
+    {
+        return parent::getData(self::SECOND_TEXT_POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSecondTextPosition($position)
+    {
+        return $this->setData(self::SECOND_TEXT_POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdDesktopImageLocation()
+    {
+        return parent::getData(self::THIRD_DESKTOP_IMAGE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdDesktopImageLocation($image)
+    {
+        return $this->setData(self::THIRD_DESKTOP_IMAGE, $image);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdMobileImageLocation()
+    {
+        return parent::getData(self::THIRD_MOBILE_IMAGE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdMobileImageLocation($image)
+    {
+        return $this->setData(self::THIRD_MOBILE_IMAGE, $image);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdLink()
+    {
+        return parent::getData(self::THIRD_LINK);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdLink($link)
+    {
+        return $this->setData(self::THIRD_LINK, $link);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdLinkText()
+    {
+        return parent::getData(self::THIRD_LINK_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdLinkText($text)
+    {
+        return $this->setData(self::THIRD_LINK_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdTitle()
+    {
+        return parent::getData(self::THIRD_DISPLAY_TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdTitle($title)
+    {
+        return $this->setData(self::THIRD_DISPLAY_TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdText()
+    {
+        return parent::getData(self::THIRD_TEXT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdText($text)
+    {
+        return $this->setData(self::THIRD_TEXT, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdEmbedCode()
+    {
+        return parent::getData(self::THIRD_EMBED_CODE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdEmbedCode($embedCode)
+    {
+        return $this->setData(self::THIRD_EMBED_CODE, $embedCode);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdTextPosition()
+    {
+        return parent::getData(self::THIRD_TEXT_POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setThirdTextPosition($position)
+    {
+        return $this->setData(self::THIRD_TEXT_POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstDesktopImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getFirstDesktopImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstMobileImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getFirstMobileImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondDesktopImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getSecondDesktopImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSecondMobileImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getSecondMobileImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdDesktopImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getThirdDesktopImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThirdMobileImageUrl($isSecureUrl = false)
+    {
+        return $this->getImageUrl($this->getThirdMobileImageLocation(), $isSecureUrl);
+    }
+
+    /**
+     * @param string $imageLocation
+     * @param bool $isSecureUrl
+     * @return string
+     */
+    protected function getImageUrl($imageLocation, $isSecureUrl) {
+        if (!$imageLocation) {
+            return '';
+        }
+
+        $baseUrl = $this->_storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA, $isSecureUrl);
+
+        return $baseUrl . $imageLocation;
+    }
+
+    /**
+     * Returns an array of widths the original image should be resized to
      * @return array
      */
     protected function getSupportedSizes()
     {
-        return [375, 768, 1024];
+        return self::SUPPORTED_IMAGE_SIZES;
     }
 
     /**
-     * Will resize images to various sizes for later use in <img> stcsets
+     * Resizes images to various sizes for later use in <img> srcsets
      * @param $originalImagePath
      * @throws \Exception
      */

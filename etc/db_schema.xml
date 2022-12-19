@@ -1,0 +1,130 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="scandiweb_slider">
+        <column xsi:type="int" name="slider_id" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255"/>
+        <column xsi:type="boolean" name="is_active" default="true" nullable="false"/>
+        <column xsi:type="boolean" name="show_menu" default="true" comment="Show slide menu"/>
+        <column xsi:type="boolean" name="show_navigation" default="true" comment="Show slide navigation"/>
+        <column xsi:type="int" name="slide_speed" unsigned="true" default="0"/>
+        <column xsi:type="smallint" name="position" default="0"/>
+        <column xsi:type="int" name="animation_speed" unsigned="true" default="0"/>
+        <column xsi:type="int" name="slides_to_display" unsigned="true" default="0"/>
+        <column xsi:type="int" name="slides_to_scroll" unsigned="true" default="0"/>
+        <column xsi:type="boolean" name="lazy_load" default="false"/>
+        <column xsi:type="int" name="slides_to_display_tablet" unsigned="true" default="0" comment="Slides to display on tablet"/>
+        <column xsi:type="int" name="slides_to_scroll_tablet" unsigned="true" default="0" comment="Slides to scroll on tablet"/>
+        <column xsi:type="int" name="slides_to_display_mobile" unsigned="true" default="0" comment="Slides to display on tablet"/>
+        <column xsi:type="int" name="slides_to_scroll_mobile" unsigned="true" default="0" comment="Slides to scroll on tablet"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="slider_id"/>
+        </constraint>
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDER_ID" indexType="btree">
+           <column name="slider_id"/>
+        </index>
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_POSITION" indexType="btree">
+            <column name="position"/>
+        </index>
+    </table>
+    <table name="scandiweb_slider_slide">
+        <column xsi:type="int" name="slide_id" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="int" name="slider_id" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255"/>
+        <column xsi:type="varchar" name="desktop_image" length="255" comment="Desktop mage location"/>
+        <column xsi:type="varchar" name="mobile_image" length="255" comment="Mobile image location"/>
+        <column xsi:type="boolean" name="is_active" default="true" nullable="false"/>
+        <column xsi:type="smallint" name="position" nullable="false" default="0"/>
+        <column xsi:type="datetime" name="start_time" comment="Slide starting time"/>
+        <column xsi:type="datetime" name="end_time" comment="Slide ending time"/>
+        <column xsi:type="varchar" name="slide_link" length="255"/>
+        <column xsi:type="text" name="slide_link_text"/>
+        <column xsi:type="varchar" name="display_title" length="255"/>
+        <column xsi:type="text" name="slide_text"/>
+        <column xsi:type="varchar" name="embed_code" length="1000" comment="Iframe url"/>
+        <column xsi:type="smallint" name="slide_text_position" default="0"/>
+        <column xsi:type="varchar" name="slide_width_class" length="255" comment="Width of the first block"/>
+        <column xsi:type="varchar" name="desktop_image_2" length="255" comment="Second block desktop image location"/>
+        <column xsi:type="varchar" name="mobile_image_2" length="255" comment="Second block mobile image location"/>
+        <column xsi:type="varchar" name="embed_code_2" length="1000" comment="Second block iframe url"/>
+        <column xsi:type="varchar" name="slide_link_2" length="255" comment="Second block link url"/>
+        <column xsi:type="varchar" name="display_title_2" length="255" comment="Second block display title"/>
+        <column xsi:type="text" name="slide_text_2" comment="Second block text"/>
+        <column xsi:type="smallint" name="slide_text_position_2" default="0" comment="Second block text position"/>
+        <column xsi:type="varchar" name="desktop_image_3" length="255" comment="Third block desktop image location"/>
+        <column xsi:type="varchar" name="mobile_image_3" length="255" comment="Third block mobile image location"/>
+        <column xsi:type="varchar" name="embed_code_3" length="1000" comment="Third block iframe url"/>
+        <column xsi:type="varchar" name="slide_link_3" length="255" comment="Third block link url"/>
+        <column xsi:type="varchar" name="display_title_3" length="255" comment="Third block display title"/>
+        <column xsi:type="text" name="slide_text_3" comment="Third block text"/>
+        <column xsi:type="smallint" name="slide_text_position_3" default="0" comment="Third block text position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="slide_id"/>
+        </constraint>
+        <constraint
+          xsi:type="foreign"
+          referenceId="SCANDIWEB_SLIDER_SLIDE_SLIDER_ID"
+          table="scandiweb_slider_slide"
+          column="slider_id"
+          referenceTable="scandiweb_slider"
+          referenceColumn="slider_id"
+          onDelete="CASCADE"
+        />
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDE_SLIDE_ID" indexType="btree">
+           <column name="slide_id"/>
+        </index>
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDE_SLIDER_ID" indexType="btree">
+           <column name="slider_id"/>
+        </index>
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDE_POSITION" indexType="btree">
+            <column name="position"/>
+        </index>
+    </table>
+    <table name="scandiweb_slider_slide_store">
+        <column xsi:type="int" name="slide_id" unsigned="true" nullable="false"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false"/>
+        <constraint
+          xsi:type="foreign"
+          referenceId="SCANDIWEB_SLIDER_SLIDE_STORE_SLIDE_ID"
+          table="scandiweb_slider_slide_store"
+          column="slide_id"
+          referenceTable="scandiweb_slider_slide"
+          referenceColumn="slide_id"
+          onDelete="CASCADE"
+        />
+        <constraint
+          xsi:type="foreign"
+          referenceId="SCANDIWEB_SLIDER_SLIDE_STORE_STORE_ID"
+          table="scandiweb_slider_slide_store"
+          column="store_id"
+          referenceTable="store"
+          referenceColumn="store_id"
+          onDelete="NO ACTION"
+        />
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDE_STORE_ID" indexType="btree">
+           <column name="slide_id"/>
+        </index>
+    </table>
+    <table name="scandiweb_slider_slide_map">
+        <column xsi:type="int" name="map_id" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="int" name="slide_id" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Image map title"/>
+        <column xsi:type="text" name="coordinates" nullable="false" comment="Map coordinates"/>
+        <column xsi:type="boolean" name="is_active" default="true"/>
+        <column xsi:type="int" name="product_id" unsigned="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="map_id"/>
+        </constraint>
+        <constraint
+          xsi:type="foreign"
+          referenceId="SCANDIWEB_SLIDER_SLIDE_MAP_SLIDE_ID"
+          table="scandiweb_slider_slide_map"
+          column="slide_id"
+          referenceTable="scandiweb_slider_slide"
+          referenceColumn="slide_id"
+          onDelete="CASCADE"
+        />
+        <index referenceId="INDEX_SCANDIWEB_SLIDER_SLIDE_MAP_ID" indexType="btree">
+           <column name="slide_id"/>
+        </index>
+    </table>
+</schema>

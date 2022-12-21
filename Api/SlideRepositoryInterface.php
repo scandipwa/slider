@@ -1,13 +1,12 @@
 <?php
 /**
  * @category Scandiweb
- * @package Scandiweb\Slider\Api\Data
+ * @package Scandiweb\Slider\Api
  * @author Denis Protassoff <info@scandiweb.com>
  * @copyright Copyright (c) 2022 Scandiweb, Ltd (http://scandiweb.com)
  */
 
 namespace Scandiweb\Slider\Api;
-
 
 /**
  * Interface SlideRepositoryInterface

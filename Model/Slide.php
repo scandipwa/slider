@@ -20,7 +20,6 @@ use Scandiweb\Slider\Api\Data\SlideInterface;
 use Scandiweb\Slider\Model\ResourceModel\Slide as SlideResourceModel;
 use Scandiweb\Slider\Model\ResourceModel\Slide\Collection as SlideCollection;
 
-
 /**
  * @method int getSliderId()
  * @method \Scandiweb\Slider\Model\Slider setSliderId(int $value)

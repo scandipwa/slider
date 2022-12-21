@@ -7,7 +7,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Scandiweb\Slider\Api\SliderRepositoryInterface;
 use Scandiweb\Slider\Api\Data\SliderInterface;
 use Scandiweb\Slider\Model\ResourceModel\Slider as SliderResource;
-use Scandiweb\Slider\Model\ResourceModel\Slider\CollectionFactory as SliderCollectionFactory;
 
 /**
  * Class SliderRepository
@@ -25,19 +24,12 @@ class SliderRepository implements SliderRepositoryInterface
      */
     protected $sliderResource;
 
-    /**
-     * @var SliderCollectionFactory
-     */
-    protected $sliderCollectionFactory;
-
     public function __construct(
         SliderFactory $sliderFactory,
-        SliderResource $sliderResource,
-        SliderCollectionFactory $sliderCollectionFactory
+        SliderResource $sliderResource
     ) {
         $this->sliderFactory = $sliderFactory;
         $this->sliderResource = $sliderResource;
-        $this->sliderCollectionFactory = $sliderCollectionFactory;
     }
 
     /**

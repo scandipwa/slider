@@ -7,10 +7,52 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Map;
 
-class Save extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\View\Result\PageFactory;
+use Scandiweb\Slider\Api\MapRepositoryInterface;
+use Scandiweb\Slider\Model\MapFactory;
+
+class Save extends Action
 {
+    /**
+     * @var PageFactory
+     */
+    protected $resultPageFactory;
+
+    /**
+     * @var MapRepositoryInterface
+     */
+    protected $mapRepository;
+
+    /**
+     * @var MapFactory
+     */
+    protected $mapFactory;
+
+    /**
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param MapRepositoryInterface $mapRepository
+     * @param MapFactory $mapFactory
+     */
+    public function __construct(
+        Context $context,
+        PageFactory $resultPageFactory,
+        MapRepositoryInterface $mapRepository,
+        MapFactory $mapFactory
+    ) {
+        parent::__construct($context);
+
+        $this->resultPageFactory = $resultPageFactory;
+        $this->mapRepository = $mapRepository;
+        $this->mapFactory = $mapFactory;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -24,45 +66,64 @@ class Save extends \Magento\Backend\App\Action
      */
     public function execute()
     {
+        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultRedirectFactory->create();
         $data = $this->getRequest()->getParams();
 
-        /* @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultRedirectFactory->create();
         if ($data) {
-
-            /* @var $model \Scandiweb\Slider\Model\Map */
-            $model = $this->_objectManager->create('Scandiweb\Slider\Model\Map');
-
             $id = $this->getRequest()->getParam('map_id');
+            $map = null;
+
             if ($id) {
-                $model->load($id);
+                try {
+                    /** @var \Scandiweb\Slider\Model\Map $map */
+                    $map = $this->mapRepository->get($id);
+                } catch (NoSuchEntityException $e) {
+                    /** \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+                    $resultRedirect = $this->resultRedirectFactory->create();
+                    $this->messageManager->addErrorMessage(__('This map no longer exists.'));
+
+                    return $resultRedirect->setPath('*/*/');
+                }
+            } else {
+                /** @var \Scandiweb\Slider\Model\Map $map */
+                $map = $this->mapFactory->create();
             }
 
             $idPath = explode('/', str_replace('product/', '', $data['selected_product']));
             $data['product_id'] = $idPath[0];
-
-            $model->setData($data);
+            $map->setData($data);
 
             try {
-                $model->save();
-                $this->messageManager->addSuccess(__('Map successfully saved.'));
-                $this->_objectManager->get('Magento\Backend\Model\Session')->setFormData(false);
+                $this->mapRepository->save($map);
+                $this->messageManager->addSuccessMessage(__('Map successfully saved.'));
+                $this->_getSession()->setFormData(false);
+
                 if ($this->getRequest()->getParam('back')) {
-                    return $resultRedirect->setPath('*/*/edit', ['map_id' => $model->getMapId(), '_current' => true]);
+                    return $resultRedirect->setPath('*/*/edit', [
+                        'map_id' => $map->getId(),
+                        '_current' => true
+                    ]);
                 }
 
-                return $resultRedirect->setPath('slideradmin/map/edit', ['map_id' => $model->getId()]);
+                return $resultRedirect->setPath('slideradmin/map/edit', [
+                    'map_id' => $map->getId()
+                ]);
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\RuntimeException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addException($e, __('Something went wrong while saving the image map.'));
+                $this->messageManager->addExceptionMessage($e,
+                    __('Something went wrong while saving the image map.')
+                );
             }
 
             $this->_getSession()->setFormData($data);
 
-            return $resultRedirect->setPath('*/*/edit', ['map_id' => $this->getRequest()->getParam('map_id')]);
+            return $resultRedirect->setPath('*/*/edit', [
+                'map_id' => $this->getRequest()->getParam('map_id')
+            ]);
         }
 
         return $resultRedirect->setPath('*/*/');

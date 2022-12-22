@@ -15,7 +15,7 @@ interface SliderRepositoryInterface
 {
     /**
      * @param int $id
-     * @return \Scandiweb\Slider\Data\SliderInterface
+     * @return \Scandiweb\Slider\Api\Data\SliderInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function get($id);
@@ -33,4 +33,11 @@ interface SliderRepositoryInterface
      * @throws \Magento\Framework\Exception\CouldNotDeleteException
      */
     public function delete(\Scandiweb\Slider\Api\Data\SliderInterface $slider);
+
+    /**
+     * @param int $id
+     * @return bool True on success
+     * @throws \Magento\Framework\Exception\CouldNotDeleteException
+     */
+    public function deleteById(int $id);
 }

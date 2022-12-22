@@ -72,4 +72,21 @@ class SliderRepository implements SliderRepositoryInterface
 
         return true;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteById(int $id)
+    {
+        try {
+            $slider = $this->get($id);
+            $this->sliderResource->delete($slider);
+        } catch (\Exception $exception) {
+            throw new CouldNotDeleteException(
+                __('Could not delete slider: %1', $exception->getMessage())
+            );
+        }
+
+        return true;
+    }
 }

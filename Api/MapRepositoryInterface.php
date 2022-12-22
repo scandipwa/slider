@@ -15,7 +15,7 @@ interface MapRepositoryInterface
 {
     /**
      * @param int $id
-     * @return \Scandiweb\Slider\Data\MapInterface
+     * @return \Scandiweb\Slider\Api\Data\MapInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function get($id);
@@ -33,11 +33,4 @@ interface MapRepositoryInterface
      * @throws \Magento\Framework\Exception\CouldNotDeleteException
      */
     public function delete(\Scandiweb\Slider\Api\Data\MapInterface $map);
-
-    /**
-     * @param int $id
-     * @return bool True on success
-     * @throws \Magento\Framework\Exception\CouldNotDeleteException
-     */
-    public function deleteById(int $id);
 }

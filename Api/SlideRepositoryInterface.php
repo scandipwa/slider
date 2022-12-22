@@ -15,7 +15,7 @@ interface SlideRepositoryInterface
 {
     /**
      * @param int $id
-     * @return \Scandiweb\Slider\Data\SlideInterface
+     * @return \Scandiweb\Slider\Api\Data\SlideInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function get($id);

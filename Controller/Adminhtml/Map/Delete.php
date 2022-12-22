@@ -7,10 +7,33 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Map;
 
-class Delete extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Scandiweb\Slider\Api\MapRepositoryInterface;
+
+class Delete extends Action
 {
+    /**
+     * @var MapRepositoryInterface
+     */
+    protected $mapRepository;
+
+    /**
+     * @param Context $context
+     * @param MapRepositoryInterface $mapRepository
+     */
+    public function __construct(
+        Context $context,
+        MapRepositoryInterface $mapRepository
+    ) {
+        parent::__construct($context);
+
+        $this->mapRepository = $mapRepository;
+    }
+
     /**
      * @return bool
      */
@@ -24,27 +47,28 @@ class Delete extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $id = $this->getRequest()->getParam('map_id');
-        /* @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
+        $id = $this->getRequest()->getParam('map_id');
+
         if (!$id) {
             // display error message
-            $this->messageManager->addError(__('We can\'t find the map to delete.'));
+            $this->messageManager->addErrorMessage(__('We can\'t find the map to delete.'));
             // go to grid
             return $resultRedirect->setPath('*/*/');
         }
 
         try {
-            /* @var \Scandiweb\Slider\Model\Map $model */
-            $model = $this->_objectManager->create('Scandiweb\Slider\Model\Map');
-            $model->load($id);
-            $model->delete();
+            $map = $this->mapRepository->get($id);
+            $this->mapRepository->delete($map);
+            $this->messageManager->addSuccessMessage(__('The map has been deleted.'));
 
-            $this->messageManager->addSuccess(__('The map has been deleted.'));
-
-            return $resultRedirect->setPath('slideradmin/slide/edit', ['slide_id' => $model->getSlideId()]);
+            return $resultRedirect->setPath('slideradmin/slide/edit', [
+                'slide_id' => $map->getSlideId()
+            ]);
         } catch (\Exception $e) {
-            $this->messageManager->addError($e->getMessage());
+            $this->messageManager->addErrorMessage($e->getMessage());
+
             return $resultRedirect->setPath('*/*/edit', ['map_id' => $id]);
         }
     }

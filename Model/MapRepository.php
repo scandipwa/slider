@@ -72,21 +72,4 @@ class SliderRepository implements MapRepositoryInterface
 
         return true;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteById(int $id)
-    {
-        try {
-            $map = $this->get($id);
-            $this->mapResource->delete($map);
-        } catch (\Exception $exception) {
-            throw new CouldNotDeleteException(
-                __('Could not delete map: %1', $exception->getMessage())
-            );
-        }
-
-        return true;
-    }
 }

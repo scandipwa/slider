@@ -7,16 +7,31 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slider;
 
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\View\Result\PageFactory;
+use Magento\Framework\View\Result\LayoutFactory;
 
-class Slides extends \Magento\Backend\App\Action
+class Maps extends Action
 {
-    public function __construct(Context $context, \Magento\Framework\View\Result\LayoutFactory $layoutFactory)
+    /**
+     * @var LayoutFactory
+     */
+    protected $layoutFactory;
+
+    /**
+     * @param Context $context
+     * @param LayoutFactory $layoutFactory
+     */
+    public function __construct(
+        Context $context,
+        LayoutFactory $layoutFactory
+    )
     {
         parent::__construct($context);
+
         $this->layoutFactory = $layoutFactory;
     }
 

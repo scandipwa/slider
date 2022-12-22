@@ -20,20 +20,6 @@ use Scandiweb\Slider\Api\Data\SlideInterface;
 use Scandiweb\Slider\Model\ResourceModel\Slide as SlideResourceModel;
 use Scandiweb\Slider\Model\ResourceModel\Slide\Collection as SlideCollection;
 
-/**
- * @method int getSliderId()
- * @method \Scandiweb\Slider\Model\Slider setSliderId(int $value)
- * @method string getTitle()
- * @method \Scandiweb\Slider\Model\Slider setTitle(string $value)
- * @method bool getIsActive()
- * @method \Scandiweb\Slider\Model\Slider setIsActive(bool $value)
- * @method int getPosition()
- * @method \Scandiweb\Slider\Model\Slider setPosition(int $value)
- * @method string getStartTime()
- * @method \Scandiweb\Slider\Model\Slider setStartTime(string $value)
- * @method string getEndTime()
- * @method \Scandiweb\Slider\Model\Slider setEndTime(string $value)
- */
 class Slide extends AbstractModel implements SlideInterface, IdentityInterface
 {
     /**
@@ -102,6 +88,102 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId(), Slider::CACHE_TAG . '_' . $this->getSliderId()];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSliderId()
+    {
+        return parent::getData(self::SLIDER_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSliderId($id)
+    {
+        return $this->setData(self::SLIDER_ID, $id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitle()
+    {
+        return parent::getData(self::TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTitle($title)
+    {
+        return $this->setData(self::TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsActive()
+    {
+        return parent::getData(self::IS_ACTIVE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsActive($isActive)
+    {
+        return $this->setData(self::IS_ACTIVE, $isActive);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPosition()
+    {
+        return parent::getData(self::POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPosition($position)
+    {
+        return $this->setData(self::POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStartTime()
+    {
+        return parent::getData(self::START_TIME);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStartTime($startTime)
+    {
+        return $this->setData(self::START_TIME, $startTime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEndTime()
+    {
+        return parent::getData(self::END_TIME);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEndTime($endTime)
+    {
+        return $this->setData(self::END_TIME, $endTime);
     }
 
     /**

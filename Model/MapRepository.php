@@ -11,7 +11,7 @@ use Scandiweb\Slider\Model\ResourceModel\Map as MapResource;
 /**
  * Class MapRepository
  */
-class SliderRepository implements MapRepositoryInterface
+class MapRepository implements MapRepositoryInterface
 {
 
     /**

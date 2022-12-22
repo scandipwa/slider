@@ -13,6 +13,21 @@ namespace Scandiweb\Slider\Api\Data;
  */
 interface MapInterface
 {
+    /** Slide ID */
+    const SLIDE_ID = 'slide_id';
+
+    /** Title */
+    const TITLE = 'title';
+
+    /** Coordinates */
+    const COORDINATES = 'coordinates';
+
+    /** Is active flag */
+    const IS_ACTIVE = 'is_active';
+
+    /** Product ID */
+    const PRODUCT_ID = 'product_id';
+
     /**
      * Get map ID
      * @return int

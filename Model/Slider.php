@@ -11,18 +11,6 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Scandiweb\Slider\Api\Data\SliderInterface;
 
-/**
- * @method string getTitle()
- * @method Slider setTitle(string $value)
- * @method bool getIsActive()
- * @method Slider setIsActive(bool $value)
- * @method int getSlideSpeed()
- * @method Slider setSlideSpeed(int $value)
- * @method int getPosition()
- * @method Slider setPosition(int $value)
- * @method int getAnimationSpeed()
- * @method Slider setAnimationSpeed(int $value)
- */
 class Slider extends AbstractModel implements SliderInterface, IdentityInterface
 {
     /**
@@ -57,6 +45,86 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitle()
+    {
+        return parent::getData(self::TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTitle($title)
+    {
+        return $this->setData(self::TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsActive()
+    {
+        return parent::getData(self::IS_ACTIVE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsActive($isActive)
+    {
+        return $this->setData(self::IS_ACTIVE, $isActive);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlideSpeed()
+    {
+        return parent::getData(self::SLIDE_SPEED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlideSpeed($speed)
+    {
+        return $this->setData(self::SLIDE_SPEED, $speed);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPosition()
+    {
+        return parent::getData(self::POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPosition($position)
+    {
+        return $this->setData(self::POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAnimationSpeed()
+    {
+        return parent::getData(self::ANIMATION_SPEED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAnimationSpeed($speed)
+    {
+        return $this->setData(self::ANIMATION_SPEED, $speed);
     }
 
     /**

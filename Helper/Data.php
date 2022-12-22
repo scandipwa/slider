@@ -7,29 +7,31 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Helper;
 
-class Data extends \Magento\Framework\App\Helper\AbstractHelper
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+
+class Data extends AbstractHelper
 {
-    /* @var \Magento\Backend\Model\UrlInterface */
+    /**
+     * @var UrlInterface
+     */
     protected $_backendUrl;
 
     /**
-     * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory
-     * @param \Magento\Backend\Model\UrlInterface $backendUrl
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param Context $context
+     * @param UrlInterface $backendUrl
      */
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        \Magento\Backend\Model\UrlInterface $backendUrl,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        Context $context,
+        UrlInterface $backendUrl
     ) {
         parent::__construct($context);
+
         $this->_backendUrl = $backendUrl;
-        $this->_storeManager = $storeManager;
-        $this->_categoryCollectionFactory = $categoryCollectionFactory;
     }
 
     /**

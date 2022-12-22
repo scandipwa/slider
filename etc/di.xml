@@ -11,7 +11,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Scandiweb\Slider\Api\MapRepositoryInterface" type="Scandiweb\Slider\Model\MapRepository"/>
-    <preference for="Scandiweb\Slider\Api\SlideRepositoryInterface" type="Scandiweb\Slider\Model\SlideRepositoryInterface"/>
+    <preference for="Scandiweb\Slider\Api\SlideRepositoryInterface" type="Scandiweb\Slider\Model\SlideRepository"/>
     <preference for="Scandiweb\Slider\Api\SliderRepositoryInterface" type="Scandiweb\Slider\Model\SliderRepository"/>
     <preference for="Scandiweb\Slider\Api\Data\MapInterface" type="Scandiweb\Slider\Model\Map"/>
     <preference for="Scandiweb\Slider\Api\Data\SlideInterface" type="Scandiweb\Slider\Model\Slide"/>

@@ -14,7 +14,7 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\LayoutFactory;
 
-class Maps extends Action
+class Slides extends Action
 {
     /**
      * @var LayoutFactory

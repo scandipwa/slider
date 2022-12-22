@@ -165,7 +165,7 @@ class Save extends Action
 
     protected function uploadImage($imageKey)
     {
-        $uploader = $this->fileUploaderFactory->create(['field' => $imageKey]);
+        $uploader = $this->fileUploaderFactory->create(['fileId' => $imageKey]);
         $imageAdapter = $this->imageAdapterFactory->create();
 
         $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);

@@ -38,7 +38,7 @@ class MapRepository implements MapRepositoryInterface
     public function get($id)
     {
         $map = $this->mapFactory->create();
-        $this->sliderResource->load($map, $id);
+        $this->mapResource->load($map, $id);
 
         if (!$map->getId()) {
             throw new NoSuchEntityException(__('Map with ID "%1" doesn\'t exist', $id));

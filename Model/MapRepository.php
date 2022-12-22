@@ -24,6 +24,10 @@ class MapRepository implements MapRepositoryInterface
      */
     protected $mapResource;
 
+    /**
+     * @param MapFactory $mapFactory
+     * @param MapResource $mapResource
+     */
     public function __construct(
         MapFactory $mapFactory,
         MapResource $mapResource

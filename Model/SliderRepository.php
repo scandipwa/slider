@@ -24,6 +24,10 @@ class SliderRepository implements SliderRepositoryInterface
      */
     protected $sliderResource;
 
+    /**
+     * @param SliderFactory $sliderFactory
+     * @param SliderResource $sliderResource
+     */
     public function __construct(
         SliderFactory $sliderFactory,
         SliderResource $sliderResource

@@ -149,6 +149,13 @@ interface SliderInterface
     public function getMobileScrollSlidesNum();
 
     /**
+     * Gets all active slides of this slider
+     * with store and date filters applied
+     * @return \Scandiweb\Slider\Api\Data\SlideInterface[]
+     */
+    public function getSlides();
+
+    /**
      * Set slider ID
      * @param int $id
      * @return $this

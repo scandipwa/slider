@@ -15,5 +15,6 @@
     <preference for="Scandiweb\Slider\Api\SliderRepositoryInterface" type="Scandiweb\Slider\Model\SliderRepository"/>
     <preference for="Scandiweb\Slider\Api\Data\MapInterface" type="Scandiweb\Slider\Model\Map"/>
     <preference for="Scandiweb\Slider\Api\Data\SlideInterface" type="Scandiweb\Slider\Model\Slide"/>
+    <preference for="Scandiweb\Slider\Api\Data\SlideSearchResultsInterface" type="Scandiweb\Slider\Model\SlideSearchResults"/>
     <preference for="Scandiweb\Slider\Api\Data\SliderInterface" type="Scandiweb\Slider\Model\Slider"/>
 </config>

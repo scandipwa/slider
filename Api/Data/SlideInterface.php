@@ -344,6 +344,12 @@ interface SlideInterface
     public function getThirdMobileImageUrl($isSecureUrl);
 
     /**
+     * Gets all active maps for this slide
+     * @return \Scandiweb\Slider\Api\Data\MapInterface[]
+     */
+    public function getMaps();
+
+    /**
      * Set slide ID
      * @param int $id
      * @return $this

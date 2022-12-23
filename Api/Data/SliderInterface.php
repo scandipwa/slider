@@ -149,17 +149,11 @@ interface SliderInterface
     public function getMobileScrollSlidesNum();
 
     /**
-     * Gets all active slides of this slider
+     * Gets all active slides for this slider
      * with store and date filters applied
      * @return \Scandiweb\Slider\Api\Data\SlideInterface[]
      */
     public function getSlides();
-
-    /**
-     * Gets all active maps of this slider
-     * @return \Scandiweb\Slider\Api\Data\MapInterface[]
-     */
-    public function getMaps();
 
     /**
      * Set slider ID

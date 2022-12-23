@@ -14,11 +14,15 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Scandiweb\Slider\Api\MapRepositoryInterface;
 use Scandiweb\Slider\Api\SlideRepositoryInterface;
 use Scandiweb\Slider\Api\Data\SliderInterface;
+use Scandiweb\Slider\Model\ResourceModel\Slider as SliderResource;
+use Scandiweb\Slider\Model\ResourceModel\Slider\Collection as SliderCollection;
 
 class Slider extends AbstractModel implements SliderInterface, IdentityInterface
 {
@@ -81,12 +85,11 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
      */
     protected $mapRepository;
 
-    public function _construct()
-    {
-        $this->_init('Scandiweb\Slider\Model\ResourceModel\Slider');
-    }
-
     /**
+     * @param Context $context
+     * @param Registry $registry
+     * @param SliderResource $sliderResource
+     * @param SliderCollection $sliderCollection
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param FilterBuilder $filterBuilder
      * @param SortOrderBuilder $sortOrderBuilder
@@ -95,8 +98,13 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
      * @param StoreManagerInterface $storeManager
      * @param SlideRepositoryInterface $slideRepository
      * @param MapRepositoryInterface $mapRepository
+     * @param array $data
      */
     public function __construct(
+        Context $context,
+        Registry $registry,
+        SliderResource $sliderResource,
+        SliderCollection $sliderCollection,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         FilterBuilder $filterBuilder,
         SortOrderBuilder $sortOrderBuilder,
@@ -104,9 +112,18 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
         TimezoneInterface $timezone,
         StoreManagerInterface $storeManager,
         SlideRepositoryInterface $slideRepository,
-        MapRepositoryInterface $mapRepository
+        MapRepositoryInterface $mapRepository,
+        $data = []
     )
     {
+        parent::__construct(
+            $context,
+            $registry,
+            $sliderResource,
+            $sliderCollection,
+            $data
+        );
+
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->filterBuilder = $filterBuilder;
         $this->sortOrderBuilder = $sortOrderBuilder;
@@ -115,6 +132,11 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
         $this->storeManager = $storeManager;
         $this->slideRepository = $slideRepository;
         $this->mapRepository = $mapRepository;
+    }
+
+    public function _construct()
+    {
+        $this->_init('Scandiweb\Slider\Model\ResourceModel\Slider');
     }
 
     /**
@@ -364,17 +386,6 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getMaps()
-    {
-        $searchCriteria = $this->getMapSearchCriteria();
-        $searchResults = $this->mapRepository->getList($searchCriteria);
-
-        return $searchResults->getItems();
-    }
-
-    /**
      * Get search criteria for slides of this slider
      * @return \Magento\Framework\Api\SearchCriteria
      */
@@ -430,29 +441,6 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
             ->addFilters([$sliderFilter, $isActiveFilter])
             ->setFilterGroups([$startTimeGroup, $endTimeGroup])
             ->setSortOrders([$positionSort])
-            ->create();
-    }
-
-    /**
-     * Get search criteria for maps of this slider
-     * @return \Magento\Framework\Api\SearchCriteria
-     */
-    protected function getMapSearchCriteria()
-    {
-        $sliderFilter = $this->filterBuilder
-            ->setField('slider_id')
-            ->setConditionType('eq')
-            ->setValue((string) $this->getId())
-            ->create();
-
-        $isActiveFilter = $this->filterBuilder
-            ->setField('is_active')
-            ->setConditionType('eq')
-            ->setValue('1')
-            ->create();
-
-        return $this->searchCriteriaBuilder
-            ->addFilters([$sliderFilter, $isActiveFilter])
             ->create();
     }
 }

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\DataObject\IdentityInterface;
@@ -49,6 +50,11 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
      */
     protected $_storeManager;
 
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
     public function _construct()
     {
         $this->_init('Scandiweb\Slider\Model\ResourceModel\Slide');
@@ -67,6 +73,7 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
         SlideResourceModel $resource = null,
         SlideCollection $resourceCollection = null,
         StoreManagerInterface $storeManager,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -78,6 +85,7 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
         );
 
         $this->_storeManager = $storeManager;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -635,6 +643,40 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMaps()
+    {
+        $searchCriteria = $this->getMapSearchCriteria();
+        $searchResults = $this->mapRepository->getList($searchCriteria);
+
+        return $searchResults->getItems();
+    }
+
+    /**
+     * Resizes images to various sizes for later use in <img> srcsets
+     * @param $originalImagePath
+     * @throws \Exception
+     */
+    public function prepareImagesForSrcset($originalImagePath)
+    {
+        $image = new \claviska\SimpleImage();
+        $fileNameParts = \pathinfo($originalImagePath);
+
+        foreach (self::SUPPORTED_IMAGE_SIZES as $size) {
+            $newFileName = $fileNameParts['dirname'] . '/' .
+                $fileNameParts['filename'] . '-' . $size . 'w.' . $fileNameParts['extension'];
+
+            $imageInfo = getimagesize($originalImagePath);
+
+            $image
+                ->fromFile($originalImagePath)
+                ->resize($size)
+                ->toFile($newFileName, $imageInfo['mime']);
+        }
+    }
+
+    /**
      * @param string $imageLocation
      * @param bool $isSecureUrl
      * @return string
@@ -650,34 +692,15 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
     }
 
     /**
-     * Returns an array of widths the original image should be resized to
-     * @return array
+     * Get search criteria for slide's maps
+     * @return \Magento\Framework\Api\SearchCriteria
      */
-    protected function getSupportedSizes()
+    protected function getMapSearchCriteria()
     {
-        return self::SUPPORTED_IMAGE_SIZES;
-    }
-
-    /**
-     * Resizes images to various sizes for later use in <img> srcsets
-     * @param $originalImagePath
-     * @throws \Exception
-     */
-    public function prepareImagesForSrcset($originalImagePath)
-    {
-        $image = new \claviska\SimpleImage();
-        $fileNameParts = \pathinfo($originalImagePath);
-
-        foreach ($this->getSupportedSizes() as $size) {
-            $newFileName = $fileNameParts['dirname'] . '/' .
-                $fileNameParts['filename'] . '-' . $size . 'w.' . $fileNameParts['extension'];
-
-            $imageInfo = getimagesize($originalImagePath);
-
-            $image
-                ->fromFile($originalImagePath)
-                ->resize($size)
-                ->toFile($newFileName, $imageInfo['mime']);
-        }
+        return $this->searchCriteriaBuilder
+            ->addFilter('slide_id', (string) $this->getId())
+            ->addFilter('slider_id', (string) $this->getSliderId())
+            ->addFilter('is_active', '1')
+            ->create();
     }
 }

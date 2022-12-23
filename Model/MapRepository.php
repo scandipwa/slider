@@ -42,7 +42,7 @@ class MapRepository implements MapRepositoryInterface
     /**
      * @var MapSearchResultsInterfaceFactory
      */
-    protected $mapResultsFactory;
+    protected $searchResultsFactory;
 
     /**
      * @var CollectionProcessorInterface
@@ -53,20 +53,20 @@ class MapRepository implements MapRepositoryInterface
      * @param MapFactory $mapFactory
      * @param MapResource $mapResource
      * @param MapCollectionFactory $mapCollectionFactory
-     * @param MapSearchResultsInterfaceFactory $mapResultsFactory
+     * @param MapSearchResultsInterfaceFactory $searchResultsFactory
      * @param CollectionProcessorInterface $collectionProcessor
      */
     public function __construct(
         MapFactory $mapFactory,
         MapResource $mapResource,
         MapCollectionFactory $mapCollectionFactory,
-        MapSearchResultsInterfaceFactory $mapResultsFactory,
+        MapSearchResultsInterfaceFactory $searchResultsFactory,
         CollectionProcessorInterface $collectionProcessor
     ) {
         $this->mapFactory = $mapFactory;
         $this->mapResource = $mapResource;
         $this->mapCollectionFactory = $mapCollectionFactory;
-        $this->mapResultsFactory = $mapResultsFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
         $this->collectionProcessor = $collectionProcessor;
     }
 
@@ -114,9 +114,13 @@ class MapRepository implements MapRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getList(SearchCriteriaInterface $searchCriteria)
+    public function getList(SearchCriteriaInterface $searchCriteria, $sliderId = 0)
     {
         $collection = $this->mapCollectionFactory->create();
+
+        if ($sliderId) {
+            $collection->addSliderFilter($sliderId);
+        }
 
         $this->collectionProcessor->process($searchCriteria, $collection);
         /** @var \Scandiweb\Slider\Api\Data\MapSearchResultsInterface $searchResults */

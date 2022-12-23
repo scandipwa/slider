@@ -114,7 +114,7 @@ class SlideRepository implements SlideRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getList(SearchCriteriaInterface $searchCriteria, $storeId)
+    public function getList(SearchCriteriaInterface $searchCriteria, $storeId = 0)
     {
         $collection = $this->slideCollectionFactory->create();
 

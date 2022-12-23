@@ -42,6 +42,6 @@ interface SlideRepositoryInterface
      */
     public function getList(
         \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria,
-        $storeId
+        $storeId = 0
     );
 }

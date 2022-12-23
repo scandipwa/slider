@@ -36,8 +36,12 @@ interface MapRepositoryInterface
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @param int $sliderId If present will return only maps of the slider with this ID
      * @return \Scandiweb\Slider\Api\Data\SlideSearchResultsInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(
+        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria,
+        $sliderId = 0
+    );
 }

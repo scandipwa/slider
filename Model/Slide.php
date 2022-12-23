@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -17,8 +18,9 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\UrlInterface;
+use Scandiweb\Slider\Api\MapRepositoryInterface;
 use Scandiweb\Slider\Api\Data\SlideInterface;
-use Scandiweb\Slider\Model\ResourceModel\Slide as SlideResourceModel;
+use Scandiweb\Slider\Model\ResourceModel\Slide as SlideResource;
 use Scandiweb\Slider\Model\ResourceModel\Slide\Collection as SlideCollection;
 
 class Slide extends AbstractModel implements SlideInterface, IdentityInterface
@@ -55,25 +57,41 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
      */
     protected $searchCriteriaBuilder;
 
+    /**
+     * @var MapRepositoryInterface
+     */
+    protected $mapRepository;
+
+    /**
+     * @var FilterBuilder
+     */
+    protected $filterBuilder;
+
     public function _construct()
     {
         $this->_init('Scandiweb\Slider\Model\ResourceModel\Slide');
     }
 
     /**
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Scandiweb\Slider\Model\ResourceModel\Slide $resource
-     * @param \Scandiweb\Slider\Model\ResourceModel\Slide\Collection $resourceCollection
+     * @param Context $context
+     * @param Registry $registry
+     * @param SlideResource $resource
+     * @param SlideCollection $resourceCollection
+     * @param StoreManagerInterface $storeManager
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param MapRepositoryInterface $mapRepository
+     * @param FilterBuilder $filterBuilder
      * @param array $data
      */
     public function __construct(
         Context $context,
         Registry $registry,
-        SlideResourceModel $resource = null,
+        SlideResource $resource = null,
         SlideCollection $resourceCollection = null,
         StoreManagerInterface $storeManager,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        MapRepositoryInterface $mapRepository,
+        FilterBuilder $filterBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -86,6 +104,8 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
 
         $this->_storeManager = $storeManager;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->mapRepository = $mapRepository;
+        $this->filterBuilder = $filterBuilder;
     }
 
     /**
@@ -648,7 +668,7 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
     public function getMaps()
     {
         $searchCriteria = $this->getMapSearchCriteria();
-        $searchResults = $this->mapRepository->getList($searchCriteria);
+        $searchResults = $this->mapRepository->getList($searchCriteria, $this->getSliderId());
 
         return $searchResults->getItems();
     }
@@ -686,7 +706,10 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
             return '';
         }
 
-        $baseUrl = $this->_storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA, $isSecureUrl);
+        $baseUrl = $this->_storeManager->getStore()->getBaseUrl(
+            UrlInterface::URL_TYPE_MEDIA,
+            $isSecureUrl
+        );
 
         return $baseUrl . $imageLocation;
     }
@@ -697,10 +720,22 @@ class Slide extends AbstractModel implements SlideInterface, IdentityInterface
      */
     protected function getMapSearchCriteria()
     {
+        // Using `main_table` because without it an error
+        // is thrown that column names are too ambiguous
+        $slideFilter = $this->filterBuilder
+            ->setField('main_table.slide_id')
+            ->setConditionType('eq')
+            ->setValue((string) $this->getId())
+            ->create();
+
+        $isActiveFilter = $this->filterBuilder
+            ->setField('main_table.is_active')
+            ->setConditionType('eq')
+            ->setValue('1')
+            ->create();
+
         return $this->searchCriteriaBuilder
-            ->addFilter('slide_id', (string) $this->getId())
-            ->addFilter('slider_id', (string) $this->getSliderId())
-            ->addFilter('is_active', '1')
+            ->addFilters([$slideFilter, $isActiveFilter])
             ->create();
     }
 }

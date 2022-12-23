@@ -156,6 +156,12 @@ interface SliderInterface
     public function getSlides();
 
     /**
+     * Gets all active maps of this slider
+     * @return \Scandiweb\Slider\Api\Data\MapInterface[]
+     */
+    public function getMaps();
+
+    /**
      * Set slider ID
      * @param int $id
      * @return $this

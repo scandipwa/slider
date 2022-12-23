@@ -5,6 +5,7 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Model;
 
 use Magento\Framework\Api\FilterBuilder;
@@ -15,6 +16,7 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Scandiweb\Slider\Api\MapRepositoryInterface;
 use Scandiweb\Slider\Api\SlideRepositoryInterface;
 use Scandiweb\Slider\Api\Data\SliderInterface;
 
@@ -74,6 +76,11 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
      */
     protected $slideRepository;
 
+    /**
+     * @var MapRepositoryInterface
+     */
+    protected $mapRepository;
+
     public function _construct()
     {
         $this->_init('Scandiweb\Slider\Model\ResourceModel\Slider');
@@ -87,6 +94,7 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
      * @param TimezoneInterface $timezone
      * @param StoreManagerInterface $storeManager
      * @param SlideRepositoryInterface $slideRepository
+     * @param MapRepositoryInterface $mapRepository
      */
     public function __construct(
         SearchCriteriaBuilder $searchCriteriaBuilder,
@@ -95,7 +103,8 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
         FilterGroupBuilder $filterGroupBuilder,
         TimezoneInterface $timezone,
         StoreManagerInterface $storeManager,
-        SlideRepositoryInterface $slideRepository
+        SlideRepositoryInterface $slideRepository,
+        MapRepositoryInterface $mapRepository
     )
     {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
@@ -105,6 +114,7 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
         $this->timezone = $timezone;
         $this->storeManager = $storeManager;
         $this->slideRepository = $slideRepository;
+        $this->mapRepository = $mapRepository;
     }
 
     /**
@@ -346,7 +356,7 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
      */
     public function getSlides()
     {
-        $searchCriteria = $this->getSlidesSearchCriteria();
+        $searchCriteria = $this->getSlideSearchCriteria();
         $storeId = $this->storeManager->getStore()->getId();
         $searchResults = $this->slideRepository->getList($searchCriteria, $storeId);
 
@@ -354,14 +364,26 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
     }
 
     /**
-     * Get search criteria for slides of this slider
+     * {@inheritdoc}
      */
-    protected function getSlidesSearchCriteria()
+    public function getMaps()
+    {
+        $searchCriteria = $this->getMapSearchCriteria();
+        $searchResults = $this->mapRepository->getList($searchCriteria);
+
+        return $searchResults->getItems();
+    }
+
+    /**
+     * Get search criteria for slides of this slider
+     * @return \Magento\Framework\Api\SearchCriteria
+     */
+    protected function getSlideSearchCriteria()
     {
         $sliderFilter = $this->filterBuilder
             ->setField('slider_id')
             ->setConditionType('eq')
-            ->setValue($this->getId())
+            ->setValue((string) $this->getId())
             ->create();
 
         $localDateTime = $this->timezone->date()->format('Y-m-d H:i:s');
@@ -408,6 +430,29 @@ class Slider extends AbstractModel implements SliderInterface, IdentityInterface
             ->addFilters([$sliderFilter, $isActiveFilter])
             ->setFilterGroups([$startTimeGroup, $endTimeGroup])
             ->setSortOrders([$positionSort])
+            ->create();
+    }
+
+    /**
+     * Get search criteria for maps of this slider
+     * @return \Magento\Framework\Api\SearchCriteria
+     */
+    protected function getMapSearchCriteria()
+    {
+        $sliderFilter = $this->filterBuilder
+            ->setField('slider_id')
+            ->setConditionType('eq')
+            ->setValue((string) $this->getId())
+            ->create();
+
+        $isActiveFilter = $this->filterBuilder
+            ->setField('is_active')
+            ->setConditionType('eq')
+            ->setValue('1')
+            ->create();
+
+        return $this->searchCriteriaBuilder
+            ->addFilters([$sliderFilter, $isActiveFilter])
             ->create();
     }
 }

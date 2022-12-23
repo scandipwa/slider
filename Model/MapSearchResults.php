@@ -9,11 +9,11 @@
 namespace Scandiweb\Slider\Model;
 
 use Magento\Framework\Api\SearchResults;
-use Scandiweb\Slider\Api\Data\SlideSearchResultsInterface;
+use Scandiweb\Slider\Api\Data\MapSearchResultsInterface;
 
 /**
- * Class SlideSearchResults
+ * Class MapSearchResults
  */
-class SlideSearchResults extends SearchResults implements SlideSearchResultsInterface
+class MapSearchResults extends SearchResults implements MapSearchResultsInterface
 {
 }

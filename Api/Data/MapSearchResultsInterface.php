@@ -11,17 +11,17 @@ namespace Scandiweb\Slider\Api\Data;
 use Magento\Framework\Api\SearchResultsInterface;
 
 /**
- * Interface SlideSearchResultsInterface
+ * Interface MapSearchResultsInterface
  */
-interface SlideSearchResultsInterface extends SearchResultsInterface
+interface MapSearchResultsInterface extends SearchResultsInterface
 {
     /**
-     * @return \Scandiweb\Slider\Api\Data\SlideInterface[]
+     * @return \Scandiweb\Slider\Api\Data\MapInterface[]
      */
     public function getItems();
 
     /**
-     * @param \Scandiweb\Slider\Api\Data\SlideInterface[] $items
+     * @param \Scandiweb\Slider\Api\Data\MapInterface[] $items
      * @return void
      */
     public function setItems(array $items);

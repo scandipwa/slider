@@ -7,16 +7,31 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slider;
 
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 
-class Index extends \Magento\Backend\App\Action
+class Index extends Action
 {
-    public function __construct(Context $context, PageFactory $resultPageFactory)
+    /**
+     * @var PageFactory
+     */
+    protected $resultPageFactory;
+
+    /**
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     */
+    public function __construct(
+        Context $context,
+        PageFactory $resultPageFactory
+    )
     {
         parent::__construct($context);
+
         $this->resultPageFactory = $resultPageFactory;
     }
 
@@ -30,7 +45,7 @@ class Index extends \Magento\Backend\App\Action
 
     public function execute()
     {
-        /* @var $resultPage \Magento\Backend\Model\View\Result\Page\Interceptor */
+        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
 
         $resultPage->setActiveMenu('Scandiweb_Slider::slider_manage');

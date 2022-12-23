@@ -7,10 +7,33 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slide;
 
-class Delete extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Scandiweb\Slider\Api\SlideRepositoryInterface;
+
+class Delete extends Action
 {
+    /**
+     * @var SlideRepositoryInterface
+     */
+    protected $slideRepository;
+
+    /**
+     * @param Context $context
+     * @param SlideRepositoryInterface $slideRepository
+     */
+    public function __construct(
+        Context $context,
+        SlideRepositoryInterface $slideRepository
+    ) {
+        parent::__construct($context);
+
+        $this->slideRepository = $slideRepository;
+    }
+
     /**
      * @return bool
      */
@@ -24,27 +47,28 @@ class Delete extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $id = $this->getRequest()->getParam('slide_id');
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
+        $id = $this->getRequest()->getParam('slide_id');
+
         if (!$id) {
             // display error message
-            $this->messageManager->addError(__('We can\'t find slide to delete.'));
+            $this->messageManager->addErrorMessage(__('We can\'t find slide to delete.'));
             // go to grid
             return $resultRedirect->setPath('*/*/');
         }
 
         try {
-            /* @var \Scandiweb\Slider\Model\Slide $model */
-            $model = $this->_objectManager->create('Scandiweb\Slider\Model\Slide');
-            $model->load($id);
-            $model->delete();
+            $slide = $this->slideRepository->get($id);
+            $this->slideRepository->delete($slide);
+            $this->messageManager->addSuccessMessage(__('The slide has been deleted.'));
 
-            $this->messageManager->addSuccess(__('The slide has been deleted.'));
-
-            return $resultRedirect->setPath('slideradmin/slider/edit', ['slider_id' => $model->getSliderId()]);
+            return $resultRedirect->setPath('slideradmin/slider/edit', [
+                'slider_id' => $slide->getSliderId()
+            ]);
         } catch (\Exception $e) {
-            $this->messageManager->addError($e->getMessage());
+            $this->messageManager->addErrorMessage($e->getMessage());
+
             return $resultRedirect->setPath('*/*/edit', ['slide_id' => $id]);
         }
     }

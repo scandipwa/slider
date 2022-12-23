@@ -7,23 +7,31 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slider;
 
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 
-class NewAction extends \Magento\Backend\App\Action
+class NewAction extends Action
 {
-    /* @var \Magento\Backend\Model\View\Result\Forward */
+    /**
+     * @var ForwardFactory
+     */
     protected $resultForwardFactory;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
+     * @param Context $context
+     * @param ForwardFactory $resultForwardFactory
      */
-    public function __construct(Context $context, ForwardFactory $resultForwardFactory)
+    public function __construct(
+        Context $context,
+        ForwardFactory $resultForwardFactory
+    )
     {
         parent::__construct($context);
+
         $this->resultForwardFactory = $resultForwardFactory;
     }
 
@@ -40,7 +48,7 @@ class NewAction extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        /* @var \Magento\Backend\Model\View\Result\Forward $resultForward */
+        /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */
         $resultForward = $this->resultForwardFactory->create();
 
         return $resultForward->forward('edit');

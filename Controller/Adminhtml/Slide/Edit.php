@@ -7,35 +7,59 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slide;
 
 use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Result\PageFactory;
+use Scandiweb\Slider\Api\SlideRepositoryInterface;
+use Scandiweb\Slider\Model\SlideFactory;
 
-class Edit extends \Magento\Backend\App\Action
+class Edit extends Action
 {
     /**
-     * @var \Magento\Framework\Registry
+     * @var Registry
      */
-    protected $_coreRegistry = null;
+    protected $_coreRegistry;
 
     /**
-     * @var \Magento\Framework\View\Result\PageFactory
+     * @var PageFactory
      */
     protected $resultPageFactory;
 
     /**
-     * @param Action\Context $context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
-     * @param \Magento\Framework\Registry $registry
+     * @var SlideRepositoryInterface
+     */
+    protected $slideRepository;
+
+    /**
+     * @var SlideFactory
+     */
+    protected $slideFactory;
+
+    /**
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param Registry $registry
+     * @param SlideRepositoryInterface $slideRepository
+     * @param SlideFactory $slideFactory
      */
     public function __construct(
-        Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Framework\Registry $registry
+        Context $context,
+        PageFactory $resultPageFactory,
+        Registry $registry,
+        SlideRepositoryInterface $slideRepository,
+        SlideFactory $slideFactory
     ) {
+        parent::__construct($context);
+
         $this->resultPageFactory = $resultPageFactory;
         $this->_coreRegistry = $registry;
-        parent::__construct($context);
+        $this->slideRepository = $slideRepository;
+        $this->slideFactory = $slideFactory;
     }
 
     /**
@@ -68,29 +92,35 @@ class Edit extends \Magento\Backend\App\Action
     public function execute()
     {
         $id = $this->getRequest()->getParam('slide_id');
-        $model = $this->_objectManager->create('Scandiweb\Slider\Model\Slide');
+        $slide = null;
 
         if ($id) {
-            $model->load($id);
-            if (!$model->getId()) {
-                $this->messageManager->addError(__('This slide no longer exists.'));
-                /** \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+            try {
+                /** @var \Scandiweb\Slider\Model\Slide $slide */
+                $slide = $this->slideRepository->get($id);
+            } catch (NoSuchEntityException $e) {
+                /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
                 $resultRedirect = $this->resultRedirectFactory->create();
+                $this->messageManager->addErrorMessage(__('This slide no longer exists.'));
 
                 return $resultRedirect->setPath('*/*/');
             }
+        } else {
+            /** @var \Scandiweb\Slider\Model\Slide $slide */
+            $slide = $this->slideFactory->create();
         }
 
-        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getFormData(true);
+        $data = $this->_getSession()->getFormData(true);
+
         if (!empty($data)) {
-            $model->setData($data);
+            $slide->setData($data);
         }
 
         if ($sliderId = $this->_request->getParam('slider_id')) {
-            $model->setData('slider_id', $sliderId);
+            $slide->setSliderId($sliderId);
         }
 
-        $this->_coreRegistry->register('slide', $model);
+        $this->_coreRegistry->register('slide', $slide);
 
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_initAction();

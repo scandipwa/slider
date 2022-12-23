@@ -8,10 +8,72 @@
  * @author      Raivis Dejus <info@scandiweb.com>
  * @copyright   Copyright (c) 2018 Scandiweb, Ltd (https://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slide;
 
-class Save extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\ReadInterface;
+use Magento\Framework\Image\AdapterFactory;
+use Magento\MediaStorage\Model\File\UploaderFactory;
+use Scandiweb\Slider\Api\SlideRepositoryInterface;
+use Scandiweb\Slider\Model\SlideFactory;
+use Scandiweb\Slider\Model\Slider;
+
+class Save extends Action
 {
+    /**
+     * @var ReadInterface
+     */
+    protected $mediaDirectory;
+
+    /**
+     * @var AdapterFactory
+     */
+    protected $imageAdapterFactory;
+
+    /**
+     * @var UploaderFactory
+     */
+    protected $fileUploaderFactory;
+
+    /**
+     * @var SlideRepositoryInterface
+     */
+    protected $slideRepository;
+
+    /**
+     * @var SlideFactory
+     */
+    protected $slideFactory;
+
+    /**
+     * @param Context $context
+     * @param Filesystem $filesystem
+     * @param AdapterFactory $imageAdapterFactory
+     * @param UploaderFactory $fileUploaderFactory
+     * @param SlideRepositoryInterface $slideRepository
+     * @param SlideFactory $slideFactory
+     */
+    public function __construct(
+        Context $context,
+        Filesystem $filesystem,
+        AdapterFactory $imageAdapterFactory,
+        UploaderFactory $fileUploaderFactory,
+        SlideRepositoryInterface $slideRepository,
+        SlideFactory $slideFactory
+    ) {
+        parent::__construct($context);
+
+        $this->imageAdapterFactory = $imageAdapterFactory;
+        $this->fileUploaderFactory = $fileUploaderFactory;
+        $this->slideRepository = $slideRepository;
+        $this->slideFactory = $slideFactory;
+        $this->mediaDirectory = $filesystem->getDirectoryRead(DirectoryList::MEDIA);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -33,14 +95,13 @@ class Save extends \Magento\Backend\App\Action
         $images['desktop_image_3'] = $this->getRequest()->getParam('desktop_image_3');
         $images['mobile_image_3'] = $this->getRequest()->getParam('mobile_image_3');
 
-        /* @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
+
         if ($data) {
-
-            /* @var \Scandiweb\Slider\Model\Slide $model */
-            $model = $this->_objectManager->create('Scandiweb\Slider\Model\Slide');
-
-            $model->setData($data);
+            /** @var \Scandiweb\Slider\Model\Slide $slide */
+            $slide = $this->slideFactory->create();
+            $slide->setData($data);
 
             $imageKeys = [
                 'desktop_image',
@@ -52,62 +113,67 @@ class Save extends \Magento\Backend\App\Action
             ];
 
             try {
-
                 foreach ($imageKeys as $imageKey) {
                     if (isset($_FILES[$imageKey]['name']) && $_FILES[$imageKey]['name']) {
-                        /* @var \Magento\MediaStorage\Model\File\Uploader $uploader */
-                        $uploader = $this->_objectManager->create(
-                            'Magento\MediaStorage\Model\File\Uploader',
-                            ['fileId' => $imageKey]
-                        );
-                        $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
+                        $result = $this->uploadImage($imageKey);
 
-                        /* @var \Magento\Framework\Image\Adapter\AdapterInterface $imageAdapter */
-                        $imageAdapter = $this->_objectManager->get('Magento\Framework\Image\AdapterFactory')->create();
-
-                        $uploader->addValidateCallback($imageKey, $imageAdapter, 'validateUploadFile')
-                            ->setAllowRenameFiles(true)
-                            ->setFilesDispersion(true);
-
-                        /* @var \Magento\Framework\Filesystem\Directory\Read $mediaDirectory */
-                        $mediaDirectory = $this->_objectManager->get('Magento\Framework\Filesystem')
-                            ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
-                        $result = $uploader->save(
-                            $mediaDirectory->getAbsolutePath(\Scandiweb\Slider\Model\Slider::MEDIA_PATH)
-                        );
                         // Resize images for use in srcSets
-                        $model->prepareImagesForSrcset($result['path'] . $result['file']);
-
-                        $model->setData($imageKey, \Scandiweb\Slider\Model\Slider::MEDIA_PATH . $result['file']);
+                        $slide->prepareImagesForSrcset($result['path'] . $result['file']);
+                        $slide->setData($imageKey, Slider::MEDIA_PATH . $result['file']);
                     } elseif (isset($images[$imageKey]['delete']) && $images[$imageKey]['delete']) {
-                        $model->setData($imageKey, null);
+                        $slide->setData($imageKey, null);
                     } else {
                         // Nothing changed, removing from the data to change
-                        $model->unSetData($imageKey);
+                        $slide->unSetData($imageKey);
                     }
                 }
 
-                $model->save();
-                $this->messageManager->addSuccess(__('Slide successfully saved.'));
-                $this->_objectManager->get('Magento\Backend\Model\Session')->setFormData(false);
+                $this->slideRepository->save($slide);
+                $this->messageManager->addSuccessMessage(__('Slide successfully saved.'));
+                $this->_getSession()->setFormData(false);
+
                 if ($this->getRequest()->getParam('back')) {
-                    return $resultRedirect->setPath('*/*/edit', ['slide_id' => $model->getId(), '_current' => true]);
+                    return $resultRedirect->setPath('*/*/edit', [
+                        'slide_id' => $slide->getId(),
+                        '_current' => true
+                    ]);
                 }
 
-                return $resultRedirect->setPath('slideradmin/slider/edit', ['slider_id' => $model->getSliderId()]);
+                return $resultRedirect->setPath('slideradmin/slider/edit', [
+                    'slider_id' => $slide->getSliderId()
+                ]);
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\RuntimeException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addException($e, __('Something went wrong while saving the slide.'));
+                $this->messageManager->addExceptionMessage(
+                    $e,
+                    __('Something went wrong while saving the slide.')
+                );
             }
 
             $this->_getSession()->setFormData($data);
 
-            return $resultRedirect->setPath('*/*/edit', ['slide_id' => $this->getRequest()->getParam('slide_id')]);
+            return $resultRedirect->setPath('*/*/edit', [
+                'slide_id' => $this->getRequest()->getParam('slide_id')
+            ]);
         }
 
         return $resultRedirect->setPath('*/*/');
+    }
+
+    protected function uploadImage($imageKey)
+    {
+        $uploader = $this->fileUploaderFactory->create(['fileId' => $imageKey]);
+        $imageAdapter = $this->imageAdapterFactory->create();
+
+        $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
+        $uploader->addValidateCallback($imageKey, $imageAdapter, 'validateUploadFile')
+            ->setAllowRenameFiles(true)
+            ->setFilesDispersion(true);
+
+        $path = $this->mediaDirectory->getAbsolutePath(Slider::MEDIA_PATH);
+        return $uploader->save($path);
     }
 }

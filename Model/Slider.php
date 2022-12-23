@@ -1,52 +1,30 @@
 <?php
 /**
- * Scandiweb_Slider
- *
  * @category    Scandiweb
  * @package     Scandiweb_Slider
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Model;
 
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\Search\FilterGroupBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Scandiweb\Slider\Api\MapRepositoryInterface;
+use Scandiweb\Slider\Api\SlideRepositoryInterface;
+use Scandiweb\Slider\Api\Data\SliderInterface;
+use Scandiweb\Slider\Model\ResourceModel\Slider as SliderResource;
+use Scandiweb\Slider\Model\ResourceModel\Slider\Collection as SliderCollection;
 
-/**
- * @method int getSliderId()
- * @method Slider setSliderId(int $value)
- * @method int getBlockId()
- * @method Slider setBlockId(int $value)
- * @method string getTitle()
- * @method Slider setTitle(string $value)
- * @method bool getIsActive()
- * @method Slider setIsActive(bool $value)
- * @method bool getShowMenu()
- * @method Slider setShowMenu(bool $value)
- * @method bool getShowNavigation()
- * @method Slider setShowNavigation(bool $value)
- * @method int getSlideSpeed()
- * @method Slider setSlideSpeed(int $value)
- * @method int getPosition()
- * @method Slider setPosition(int $value)
- * @method int getAnimationSpeed()
- * @method Slider setAnimationSpeed(int $value)
- * @method int getSlidesToDisplay()
- * @method Slider setSlidesToDisplay(int $value)
- * @method int getSlidesToScroll()
- * @method Slider setSlidesToScroll(int $value)
- * @method bool getLazyLoad()
- * @method Slider setLazyLoad(bool $value)
- * @method int getSlidesToDisplayTablet()
- * @method Slider setSlidesToDisplayTablet(int $value)
- * @method int getSlidesToScrollTablet()
- * @method Slider setSlidesToScrollTablet(int $value)
- * @method int getSlidesToDisplayMobile()
- * @method Slider setSlidesToDisplayMobile(int $value)
- * @method int getSlidesToScrollMobile()
- * @method Slider setSlidesToScrollMobile(int $value)
- */
-class Slider extends AbstractModel implements IdentityInterface
+class Slider extends AbstractModel implements SliderInterface, IdentityInterface
 {
     /**
      * Slider cache tag
@@ -67,6 +45,95 @@ class Slider extends AbstractModel implements IdentityInterface
      */
     protected $_eventPrefix = 'scandiweb_slider_slider';
 
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
+    /**
+     * @var FilterBuilder
+     */
+    protected $filterBuilder;
+
+    /**
+     * @var SortOrderBuilder
+     */
+    protected $sortOrderBuilder;
+
+    /**
+     * @var FilterGroupBuilder
+     */
+    protected $filterGroupBuilder;
+
+    /**
+     * @var TimezoneInterface
+     */
+    protected $timezone;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
+     * @var SlideRepositoryInterface
+     */
+    protected $slideRepository;
+
+    /**
+     * @var MapRepositoryInterface
+     */
+    protected $mapRepository;
+
+    /**
+     * @param Context $context
+     * @param Registry $registry
+     * @param SliderResource $sliderResource
+     * @param SliderCollection $sliderCollection
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param FilterBuilder $filterBuilder
+     * @param SortOrderBuilder $sortOrderBuilder
+     * @param FilterGroupBuilder $filterGroupBuilder
+     * @param TimezoneInterface $timezone
+     * @param StoreManagerInterface $storeManager
+     * @param SlideRepositoryInterface $slideRepository
+     * @param MapRepositoryInterface $mapRepository
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Registry $registry,
+        SliderResource $sliderResource,
+        SliderCollection $sliderCollection,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        FilterBuilder $filterBuilder,
+        SortOrderBuilder $sortOrderBuilder,
+        FilterGroupBuilder $filterGroupBuilder,
+        TimezoneInterface $timezone,
+        StoreManagerInterface $storeManager,
+        SlideRepositoryInterface $slideRepository,
+        MapRepositoryInterface $mapRepository,
+        $data = []
+    )
+    {
+        parent::__construct(
+            $context,
+            $registry,
+            $sliderResource,
+            $sliderCollection,
+            $data
+        );
+
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->filterBuilder = $filterBuilder;
+        $this->sortOrderBuilder = $sortOrderBuilder;
+        $this->filterGroupBuilder = $filterGroupBuilder;
+        $this->timezone = $timezone;
+        $this->storeManager = $storeManager;
+        $this->slideRepository = $slideRepository;
+        $this->mapRepository = $mapRepository;
+    }
+
     public function _construct()
     {
         $this->_init('Scandiweb\Slider\Model\ResourceModel\Slider');
@@ -80,5 +147,300 @@ class Slider extends AbstractModel implements IdentityInterface
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitle()
+    {
+        return parent::getData(self::TITLE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTitle($title)
+    {
+        return $this->setData(self::TITLE, $title);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsActive()
+    {
+        return parent::getData(self::IS_ACTIVE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsActive($isActive)
+    {
+        return $this->setData(self::IS_ACTIVE, $isActive);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlideSpeed()
+    {
+        return parent::getData(self::SLIDE_SPEED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlideSpeed($speed)
+    {
+        return $this->setData(self::SLIDE_SPEED, $speed);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPosition()
+    {
+        return parent::getData(self::POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPosition($position)
+    {
+        return $this->setData(self::POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAnimationSpeed()
+    {
+        return parent::getData(self::ANIMATION_SPEED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAnimationSpeed($speed)
+    {
+        return $this->setData(self::ANIMATION_SPEED, $speed);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsMenuShown()
+    {
+        return parent::getData(self::SHOW_MENU);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsMenuShown($isMenuShown)
+    {
+        return $this->setData(self::SHOW_MENU, $isMenuShown);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsNavigationShown()
+    {
+        return parent::getData(self::SHOW_NAVIGATION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsNavigationShown($isNavigationShown)
+    {
+        return $this->setData(self::SHOW_NAVIGATION, $isNavigationShown);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDesktopSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_DISPLAY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDesktopSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_DISPLAY, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDesktopScrollSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_SCROLL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDesktopScrollSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_SCROLL, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIsLazyLoaded()
+    {
+        return parent::getData(self::LAZY_LOAD);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsLazyLoaded($isLazyLoaded)
+    {
+        return $this->setData(self::LAZY_LOAD, $isLazyLoaded);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTabletSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_DISPLAY_TABLET);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTabletSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_DISPLAY_TABLET, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTabletScrollSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_SCROLL_TABLET);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTabletScrollSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_SCROLL_TABLET, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMobileSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_DISPLAY_MOBILE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMobileSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_DISPLAY_MOBILE, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMobileScrollSlidesNum()
+    {
+        return parent::getData(self::SLIDES_TO_SCROLL_MOBILE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMobileScrollSlidesNum($slidesNum)
+    {
+        return $this->setData(self::SLIDES_TO_SCROLL_MOBILE, $slidesNum);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlides()
+    {
+        $searchCriteria = $this->getSlideSearchCriteria();
+        $storeId = $this->storeManager->getStore()->getId();
+        $searchResults = $this->slideRepository->getList($searchCriteria, $storeId);
+
+        return $searchResults->getItems();
+    }
+
+    /**
+     * Get search criteria for slides of this slider
+     * @return \Magento\Framework\Api\SearchCriteria
+     */
+    protected function getSlideSearchCriteria()
+    {
+        $sliderFilter = $this->filterBuilder
+            ->setField('slider_id')
+            ->setConditionType('eq')
+            ->setValue((string) $this->getId())
+            ->create();
+
+        $localDateTime = $this->timezone->date()->format('Y-m-d H:i:s');
+        $startTimeFilter = $this->filterBuilder
+            ->setField('start_time')
+            ->setConditionType('lteq')
+            ->setValue($localDateTime)
+            ->create();
+
+        $endTimeFilter = $this->filterBuilder
+            ->setField('end_time')
+            ->setConditionType('gteq')
+            ->setValue($localDateTime)
+            ->create();
+
+        $startTimeNullFilter = $this->filterBuilder
+            ->setField('start_time')
+            ->setConditionType('null')
+            ->create();
+
+        $endTimeNullFilter = $this->filterBuilder
+            ->setField('end_time')
+            ->setConditionType('null')
+            ->create();
+
+        $startTimeGroup = $this->filterGroupBuilder
+            ->setFilters([$startTimeFilter, $startTimeNullFilter])
+            ->create();
+
+        $endTimeGroup = $this->filterGroupBuilder
+            ->setFilters([$endTimeFilter, $endTimeNullFilter])
+            ->create();
+
+        $isActiveFilter = $this->filterBuilder
+            ->setField('is_active')
+            ->setConditionType('eq')
+            ->setValue('1');
+
+        $positionSort = $this->sortOrderBuilder
+            ->setField('position')
+            ->create();
+
+        return $this->searchCriteriaBuilder
+            ->addFilters([$sliderFilter, $isActiveFilter])
+            ->setFilterGroups([$startTimeGroup, $endTimeGroup])
+            ->setSortOrders([$positionSort])
+            ->create();
     }
 }

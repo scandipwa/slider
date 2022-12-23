@@ -7,31 +7,38 @@
  * @author      Artis Ozolins <artis@scandiweb.com>
  * @copyright   Copyright (c) 2016 Scandiweb, Ltd (http://scandiweb.com)
  */
+
 namespace Scandiweb\Slider\Controller\Adminhtml\Slider\Widget;
 
-class Chooser extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\View\LayoutFactory;
+
+class Chooser extends Action
 {
     /**
-     * @var \Magento\Framework\Controller\Result\RawFactory
+     * @var RawFactory
      */
     protected $resultRawFactory;
 
     /**
-     * @var \Magento\Framework\View\LayoutFactory
+     * @var LayoutFactory
      */
     protected $layoutFactory;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @param \Magento\Framework\View\LayoutFactory $layoutFactory
+     * @param Context $context
+     * @param RawFactory $resultRawFactory
+     * @param LayoutFactory $layoutFactory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\View\LayoutFactory $layoutFactory
+        Context $context,
+        RawFactory $resultRawFactory,
+        LayoutFactory $layoutFactory
     ) {
         parent::__construct($context);
+
         $this->resultRawFactory = $resultRawFactory;
         $this->layoutFactory = $layoutFactory;
     }
@@ -52,10 +59,10 @@ class Chooser extends \Magento\Backend\App\Action
             ['data' => ['id' => $uniqId]]
         );
 
-        $html = $productsGrid->toHtml();
-
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
+        $html = $productsGrid->toHtml();
+
         return $resultRaw->setContents($html);
     }
 }
